@@ -1,0 +1,51 @@
+{
+  "name": "game-bucket",
+  "version": "6.0.0",
+  "description": "Common game utilities + rollup config, suitable for a small game competition. Like [JS13k](http://js13kgames.com/)!",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "pocket-physics": "^10.1.1",
+    "science-halt": "^0.2.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "@babel/preset-typescript": "^7.18.6",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^22.0.2",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-replace": "^4.0.0",
+    "@rollup/plugin-url": "^7.0.0",
+    "@types/jest": "^28.1.7",
+    "ect-bin": "^1.4.1",
+    "gh-pages": "^4.0.0",
+    "html-minifier": "^4.0.0",
+    "http-server": "^14.1.1",
+    "jest": "^28.1.3",
+    "prettier": "2.7.1",
+    "roadroller": "^2.1.0",
+    "rollup": "^2.78.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "svgo": "^2.8.0",
+    "terser": "^5.14.2",
+    "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "types": "tsc",
+    "build": "rollup -c",
+    "start": "./tools/start.sh",
+    "zip": "./tools/zip.sh",
+    "deploy": "yarn zip && gh-pages -d dist/",
+    "clean": "rm -rf dist",
+    "test": "jest"
+  },
+  "author": "Drew Petersen <senofpeter@gmail.com>",
+  "license": "MIT",
+  "//browserslist": "Prevent babel from over-transpiling anything",
+  "browserslist": [
+    "firefox 100, last 1 iOS major versions"
+  ]
+}

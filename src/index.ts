@@ -12,7 +12,7 @@ import { createGameLoop } from './loop';
 import { useDebugMode } from './query-string';
 import { BodyTextLines, YellowRGBA } from './theme';
 import { schedule, tick } from './time';
-import { useCES } from './use-ces';
+import { initializeCES } from './use-ces';
 import { assertDefinedFatal } from './utils';
 import {
   asViewportUnits,
@@ -20,6 +20,7 @@ import {
   computeWindowResize,
   drawSheetAsset,
   drawTextLinesInViewport,
+  initializeResize as initializeWindowResizeListener,
   moveViewportCamera,
   predictTextHeight,
   vv2,
@@ -36,10 +37,11 @@ async function boot() {
   // document database. Each entity (document) has a numeric id. Specific
   // fields and combinations of fields across the entire Store can be queried
   // by `select`ing those fields, as seen below.
-  const ces = useCES();
+  const ces = initializeCES();
 
   // create the initial viewport and sizing
-  computeWindowResize();
+  initializeWindowResizeListener(ces);
+  computeWindowResize(ces);
 
   // For a good example of touch + keyboard input, see
   // https://github.com/kirbysayshi/js13k-2020/blob/master/src/ui.ts
@@ -67,7 +69,7 @@ async function boot() {
     // Move the camera so the test image is framed nicely.
     const vp = ces.selectFirstData('viewport');
     assertDefinedFatal(vp);
-    moveViewportCamera(vv2(vp.vpWidth / 2, vp.camera.frustrum.y));
+    moveViewportCamera(vp, vv2(vp.vpWidth / 2, vp.camera.frustrum.y));
   }
 
   // Physics "system", updated at 10fps
@@ -83,17 +85,22 @@ async function boot() {
 
   // clear the screen at 60fps
   drawStepSystems.push((ces) => {
-    clearScreen();
+    const vp = ces.selectFirstData('viewport');
+    assertDefinedFatal(vp);
+    clearScreen(vp);
   });
 
   const testSprite = new AsepriteAtlasAnimatedSprite('flick');
 
   // Draw "system" updated at 60fps
   drawStepSystems.push(function (ces, interp) {
+    const vp = ces.selectFirstData('viewport');
+    assertDefinedFatal(vp);
     testSprite.tick(1000 / DrawTimeHz);
     const frame = testSprite.getFrame();
     if (!frame) return;
     drawSheetAsset(
+      vp,
       assets.getAtlas(),
       interp,
       vv2(0, 0),
@@ -129,16 +136,17 @@ async function boot() {
   drawStepSystems.push((ces) => {
     if (!useDebugMode()) return;
 
-    const screen = ces.selectFirstData('viewport');
+    const vp = ces.selectFirstData('viewport');
     const fpsData = ces.selectFirstData('fps');
-    assertDefinedFatal(screen);
+    assertDefinedFatal(vp);
     assertDefinedFatal(fpsData);
 
     const text = fpsData.v.toFixed(2);
-    const h = predictTextHeight(text, BodyTextLines);
+    const h = predictTextHeight(vp, text, BodyTextLines);
     drawTextLinesInViewport(
+      vp,
       text,
-      vv2(screen.vpWidth, -screen.vpHeight + h.total),
+      vv2(vp.vpWidth, -vp.vpHeight + h.total),
       'right',
       BodyTextLines,
       YellowRGBA
@@ -174,7 +182,10 @@ async function boot() {
       drawStepSystems.forEach((s) => s(ces, interp));
     },
     onPanic,
-    onFPS,
+    onFPS: (fps) => {
+      const data = ces.selectFirstData('fps')!;
+      data.v = fps;
+    },
   });
 
   // Turn into dead-code during minification via NODE_ENV check.
@@ -187,12 +198,6 @@ function onPanic() {
   if (process.env.NODE_ENV !== 'production') {
     console.log('panic!');
   }
-}
-
-function onFPS(fps: number) {
-  const ces = useCES();
-  const data = ces.selectFirstData('fps')!;
-  data.v = fps;
 }
 
 boot();

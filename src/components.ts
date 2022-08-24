@@ -1,6 +1,6 @@
 import { AsepriteAtlasAnimatedSprite } from './asset-map';
 import { AssuredEntityId, CES3, NarrowComponent } from './ces3';
-import { useCES } from './use-ces';
+import { CES3C } from './use-ces';
 import {
   ViewportCmp,
   ViewportUnits,
@@ -30,9 +30,9 @@ export type SpringConstraintCmp = {
 };
 
 export function destroySpringConstraint(
+  ces: CES3C,
   id: AssuredEntityId<SpringConstraintCmp>
 ) {
-  const ces = useCES();
   const data = ces.data(id, 'spring-constraint');
   ces.destroy(id);
   if (!data) return;

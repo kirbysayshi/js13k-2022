@@ -1,7 +1,7 @@
 import { accelerate, inertia } from 'pocket-physics';
 import ScienceHalt from 'science-halt';
 import TestPng from '../assets/00 - Fool.png';
-import { AssetMap } from './asset-map';
+import { AsepriteAtlasAnimatedSprite, AssetMap } from './asset-map';
 import {
   DrawStepSystem,
   DrawTimeHz,
@@ -15,9 +15,10 @@ import { schedule, tick } from './time';
 import { useCES } from './use-ces';
 import { assertDefinedFatal } from './utils';
 import {
+  asViewportUnits,
   clearScreen,
   computeWindowResize,
-  drawAsset,
+  drawSheetAsset,
   drawTextLinesInViewport,
   moveViewportCamera,
   predictTextHeight,
@@ -85,18 +86,28 @@ async function boot() {
     clearScreen();
   });
 
+  const testSprite = new AsepriteAtlasAnimatedSprite('flick');
+
   // Draw "system" updated at 60fps
   drawStepSystems.push(function (ces, interp) {
-    const bg = assets.getImage('test');
-    const screen = ces.selectFirstData('viewport');
-    assertDefinedFatal(screen);
-    drawAsset(
-      bg,
+    testSprite.tick(1000 / DrawTimeHz);
+    const frame = testSprite.getFrame();
+    if (!frame) return;
+    drawSheetAsset(
+      assets.getImage('atlas'),
       interp,
       vv2(0, 0),
       vv2(0, 0),
-      screen.vpWidth,
-      screen.vpHeight
+      frame.frame.x,
+      frame.frame.y,
+      frame.frame.w,
+      frame.frame.h,
+      asViewportUnits(frame.spriteSourceSize.x),
+      asViewportUnits(frame.spriteSourceSize.y),
+      asViewportUnits(frame.sourceSize.w),
+      asViewportUnits(frame.sourceSize.h),
+      false,
+      4
     );
   });
 

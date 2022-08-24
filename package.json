@@ -35,6 +35,7 @@
   },
   "scripts": {
     "types": "tsc",
+    "atlas": "./tools/atlas.sh",
     "build": "rollup -c",
     "start": "./tools/start.sh",
     "zip": "./tools/zip.sh",

@@ -78,7 +78,11 @@ export default {
 
     commonjs(),
 
-    babel({ extensions, babelHelpers: 'bundled', include: ['src/**/*'] }),
+    babel({
+      extensions,
+      babelHelpers: 'bundled',
+      include: ['src/**/*', 'assets/**/*.ts'],
+    }),
 
     replace({
       preventAssignment: true,

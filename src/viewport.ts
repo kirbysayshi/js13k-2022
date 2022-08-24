@@ -285,13 +285,21 @@ export function predictTextHeight(
 }
 
 export function drawAsset(
-  asset: HTMLImageElement,
+  source: HTMLImageElement,
   interp: number,
-  cpos: Vector2,
-  ppos: Vector2,
-  width: ViewportUnits,
-  height: ViewportUnits = width,
-  center = false
+  cpos: ViewportUnitVector2,
+  ppos: ViewportUnitVector2,
+  destWidth: ViewportUnits,
+  destHeight: ViewportUnits = destWidth,
+  center = false,
+  sourceX = 0,
+  sourceY = 0,
+  sourceW = source.width,
+  sourceH = source.height,
+  frameXCorrection: ViewportUnits = asViewportUnits(0),
+  frameYCorrection: ViewportUnits = asViewportUnits(0),
+  frameWidth = destWidth,
+  frameHeight = destHeight
 ) {
   const ces = useCES();
   const vp = ces.selectFirstData('viewport')!;
@@ -306,22 +314,82 @@ export function drawAsset(
     'y'
   );
 
-  const pxWidth = toPixelUnits(width);
-  const pxHeight = toPixelUnits(height);
+  const pxWidth = toPixelUnits(destWidth);
+  const pxHeight = toPixelUnits(destHeight);
+
+  const pxCenterWidth = toPixelUnits(frameWidth);
+  const pxCenterHeight = toPixelUnits(frameHeight);
 
   ctx.save();
   ctx.scale(1, -1);
 
   ctx.drawImage(
-    asset,
-    0,
-    0,
-    asset.width,
-    asset.height,
-    center ? x - pxWidth / 2 : x,
-    center ? y - pxHeight / 2 : y,
+    source,
+    sourceX,
+    sourceY,
+    sourceW,
+    sourceH,
+    (center ? x - pxCenterWidth / 2 : x) + toPixelUnits(frameXCorrection),
+    (center ? y - pxCenterHeight / 2 : y) + toPixelUnits(frameYCorrection),
     pxWidth,
     pxHeight
+  );
+  ctx.restore();
+}
+
+export function drawSheetAsset(
+  source: HTMLImageElement,
+  interp: number,
+  cpos: ViewportUnitVector2,
+  ppos: ViewportUnitVector2,
+  // source: the slice within the sprite sheet atlas
+  sourceX: number,
+  sourceY: number,
+  sourceW: number,
+  sourceH: number,
+  // the offset of the trimmed slice relative to the original single sprite. aka
+  // spriteSourceSize.x/y. If the sprite is not trimmed, these will be zero.
+  frameXCorrection: ViewportUnits = asViewportUnits(0),
+  frameYCorrection: ViewportUnits = asViewportUnits(0),
+  // the size of the original single sprite. If the sprite is not trimmed, these
+  // will be the same as the slice size.
+  frameWidth = toViewportUnits(sourceW),
+  frameHeight = toViewportUnits(sourceH),
+  // whether to center the sprite at cpos/ppos
+  center = false,
+  scale = 1
+) {
+  const ces = useCES();
+  const vp = ces.selectFirstData('viewport')!;
+  const { ctx } = vp.dprCanvas;
+
+  const x = toProjectedPixels(
+    asViewportUnits(ppos.x + interp * (cpos.x - ppos.x)),
+    'x'
+  );
+  const y = toProjectedPixels(
+    asViewportUnits(ppos.y + interp * (cpos.y - ppos.y)),
+    'y'
+  );
+
+  const pxCenterWidth = toPixelUnits(frameWidth) * scale;
+  const pxCenterHeight = toPixelUnits(frameHeight) * scale;
+
+  const destX = asViewportUnits(cpos.x + frameXCorrection * scale);
+  const destY = asViewportUnits(cpos.y + frameYCorrection * scale);
+
+  ctx.save();
+  ctx.scale(1, -1);
+  ctx.drawImage(
+    source,
+    sourceX,
+    sourceY,
+    sourceW,
+    sourceH,
+    (center ? x - pxCenterWidth / 2 : x) + toPixelUnits(destX),
+    (center ? y - pxCenterHeight / 2 : y) + toPixelUnits(destY),
+    toPixelUnits(asViewportUnits(sourceW * scale)),
+    toPixelUnits(asViewportUnits(sourceH * scale))
   );
   ctx.restore();
 }

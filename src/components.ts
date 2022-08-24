@@ -1,4 +1,4 @@
-import { LoadedAsset } from './asset-map';
+import { AsepriteAtlasAnimatedSprite } from './asset-map';
 import { AssuredEntityId, CES3, NarrowComponent } from './ces3';
 import { useCES } from './use-ces';
 import {
@@ -54,7 +54,7 @@ export type DrawConsoleCmp = {
 
 export type AssetCmp = {
   k: 'asset';
-  asset: LoadedAsset;
+  asset: AsepriteAtlasAnimatedSprite['tag'];
   width: ViewportUnits;
   height: ViewportUnits;
 };

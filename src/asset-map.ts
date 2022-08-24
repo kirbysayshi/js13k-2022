@@ -1,41 +1,18 @@
 import AtlasJson from '../assets/pipeline-output-aseprite/atlas';
 import AtlasImg from '../assets/pipeline-output-aseprite/atlas.png';
 import { loadImage } from './load-image';
+import { assertDefinedFatal } from './utils';
 
-// TODO: probably don't need asset registry at all, since it's a sprite atlas...
+export class Assets {
+  atlas: HTMLImageElement | null = null;
 
-const AssetRegistry = [{ path: AtlasImg, name: 'atlas' }] as const;
-
-type AssetNames = typeof AssetRegistry[number]['name'];
-
-export type LoadedAsset = {
-  path: string;
-  name: string;
-  img: HTMLImageElement;
-};
-
-export class AssetMap {
-  loadedAssets: { [key: string]: LoadedAsset } = {};
-
-  async preload(opt_onlyLoad: Set<AssetNames> = new Set()): Promise<void> {
-    await Promise.all(
-      AssetRegistry.map(async (u) => {
-        if (
-          this.loadedAssets[u.name] ||
-          (opt_onlyLoad.size > 0 && !opt_onlyLoad.has(u.name))
-        )
-          return;
-
-        const img = await loadImage(u.path);
-        this.loadedAssets[u.name] = { path: u.path, name: u.name, img };
-      })
-    );
+  async preload() {
+    this.atlas = await loadImage(AtlasImg);
   }
 
-  getImage(name: AssetNames): HTMLImageElement {
-    const asset = this.loadedAssets[name];
-    if (!asset) throw new Error(`LD_${name}`);
-    return asset.img;
+  getAtlas(): HTMLImageElement {
+    assertDefinedFatal(this.atlas);
+    return this.atlas;
   }
 }
 
@@ -115,7 +92,7 @@ export class AsepriteAtlasAnimatedSprite {
   private frame = 0;
   private accum = 0;
   constructor(
-    private tag: keyof typeof animations,
+    public readonly tag: keyof typeof animations,
     private anim = animations[tag]
   ) {}
 

@@ -1,7 +1,7 @@
 import { accelerate, inertia } from 'pocket-physics';
 import ScienceHalt from 'science-halt';
 import TestPng from '../assets/00 - Fool.png';
-import { AsepriteAtlasAnimatedSprite, AssetMap } from './asset-map';
+import { AsepriteAtlasAnimatedSprite, Assets } from './asset-map';
 import {
   DrawStepSystem,
   DrawTimeHz,
@@ -28,7 +28,7 @@ import {
 console.log(TestPng);
 
 async function boot() {
-  const assets = new AssetMap();
+  const assets = new Assets();
   await assets.preload();
 
   // A component=entity-system(s) is a pattern for managing the lifecycles and
@@ -94,7 +94,7 @@ async function boot() {
     const frame = testSprite.getFrame();
     if (!frame) return;
     drawSheetAsset(
-      assets.getImage('atlas'),
+      assets.getAtlas(),
       interp,
       vv2(0, 0),
       vv2(0, 0),

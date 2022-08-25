@@ -15,10 +15,12 @@ import { schedule, tick } from './time';
 import { initializeCES } from './use-ces';
 import { assertDefinedFatal } from './utils';
 import {
+  asPixels,
   asViewportUnits,
   clearScreen,
   computeWindowResize,
-  drawSheetAsset,
+  drawSheetAssetPx,
+  drawSheetAssetVp,
   drawTextLinesInViewport,
   initializeResize as initializeWindowResizeListener,
   moveViewportCamera,
@@ -90,7 +92,7 @@ async function boot() {
     clearScreen(vp);
   });
 
-  const testSprite = new AsepriteAtlasAnimatedSprite('flick');
+  const testSprite = new AsepriteAtlasAnimatedSprite('test');
 
   // Draw "system" updated at 60fps
   drawStepSystems.push(function (ces, interp) {
@@ -99,7 +101,8 @@ async function boot() {
     testSprite.tick(1000 / DrawTimeHz);
     const frame = testSprite.getFrame();
     if (!frame) return;
-    drawSheetAsset(
+
+    drawSheetAssetPx(
       vp,
       assets.getAtlas(),
       interp,
@@ -109,12 +112,30 @@ async function boot() {
       frame.frame.y,
       frame.frame.w,
       frame.frame.h,
-      asViewportUnits(frame.spriteSourceSize.x),
-      asViewportUnits(frame.spriteSourceSize.y),
-      asViewportUnits(frame.sourceSize.w),
-      asViewportUnits(frame.sourceSize.h),
+      asPixels(frame.spriteSourceSize.x),
+      asPixels(frame.spriteSourceSize.y),
+      asPixels(frame.sourceSize.w),
+      asPixels(frame.sourceSize.h),
+      false
+    );
+
+    drawSheetAssetVp(
+      vp,
+      assets.getAtlas(),
+      interp,
+      vv2(50, 0),
+      vv2(50, 0),
+      frame.frame.x,
+      frame.frame.y,
+      frame.frame.w,
+      frame.frame.h,
+      asPixels(frame.spriteSourceSize.x),
+      asPixels(frame.spriteSourceSize.y),
+      asPixels(frame.sourceSize.w),
+      asPixels(frame.sourceSize.h),
       false,
-      4
+      asViewportUnits(50),
+      asViewportUnits(50)
     );
   });
 

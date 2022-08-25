@@ -5,6 +5,9 @@ import { BlackRGBA, BodyTextFont, TitleTextFont, YellowRGBA } from './theme';
 import { CES3C } from './use-ces';
 
 type Pixels = number & { _isPixels: true };
+export function asPixels(n: number) {
+  return n as Pixels;
+}
 
 export type ViewportUnits<T = number> = T & { _isViewportUnits: true };
 export function asViewportUnits(n: number) {
@@ -64,8 +67,6 @@ function toPixelUnitsVec(
 
 // Ignore the camera's position when computing pixel values (for relative use only)
 export function toPixelUnits(vp: ViewportCmp, n: ViewportUnits) {
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport')!;
   const cvs = vp.dprCanvas;
 
   // This causes jittering...
@@ -80,9 +81,6 @@ export function toProjectedPixels(
   n: ViewportUnits,
   axis: 'x' | 'y'
 ) {
-  // TODO: perhaps make this a method on camera instead to avoid so many lookups.
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport')!;
   const { camera } = vp;
   return toPixelUnits(
     vp,
@@ -91,14 +89,6 @@ export function toProjectedPixels(
 }
 
 export const toViewportUnits = (vp: ViewportCmp, n: number): ViewportUnits => {
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport');
-  // if (process.env.NODE_ENV !== 'production') {
-  //   if (!vp)
-  //     throw new Error(
-  //       'tried to compute pixel units without a viewport defined!'
-  //     );
-  // }
   const units = (n / vp!.dprCanvas.width) * 100;
   return units as ViewportUnits;
 };
@@ -107,8 +97,6 @@ export function moveViewportCamera(
   vp: ViewportCmp,
   toPos: ViewportUnitVector2
 ) {
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport')!;
   copy(vp.camera.target, toPos);
 }
 
@@ -123,8 +111,6 @@ export function restoreNativeCanvasDrawing(vp: ViewportCmp) {
 }
 
 export function clearScreen(vp: ViewportCmp) {
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport')!;
   const { ctx } = vp.dprCanvas;
   ctx.save();
   restoreNativeCanvasDrawing(vp);
@@ -136,8 +122,6 @@ export function fillBeyondCamera(
   vp: ViewportCmp,
   color: BlackRGBA = BlackRGBA
 ) {
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport')!;
   const { ctx } = vp.dprCanvas;
   ctx.fillStyle = color;
 
@@ -170,8 +154,6 @@ export function drawTextLinesInViewport(
   bgcolor: YellowRGBA | BlackRGBA | 'transparent' = 'transparent',
   fontName: TitleTextFont | BodyTextFont = BodyTextFont
 ): ViewportUnits {
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport')!;
   const { camera } = vp;
 
   // translate "relative" viewport position to world coordinates
@@ -202,8 +184,6 @@ export function drawTextLinesInWorld(
   bgcolor: YellowRGBA | BlackRGBA | 'transparent' = 'transparent',
   fontName: TitleTextFont | BodyTextFont = BodyTextFont
 ): ViewportUnits {
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport')!;
   const { camera } = vp;
   const { ctx } = vp.dprCanvas;
   ctx.save();
@@ -270,8 +250,6 @@ export function predictTextHeight(
   maxLinesPerCanvas: number,
   fontName: TitleTextFont | BodyTextFont = BodyTextFont
 ) {
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport')!;
   const { ctx } = vp.dprCanvas;
   const textSize = vp.height / maxLinesPerCanvas;
 
@@ -306,67 +284,11 @@ export function predictTextHeight(
   };
 }
 
-export function drawAsset(
+export function drawSheetAssetPx(
   vp: ViewportCmp,
   source: HTMLImageElement,
   interp: number,
-  cpos: ViewportUnitVector2,
-  ppos: ViewportUnitVector2,
-  destWidth: ViewportUnits,
-  destHeight: ViewportUnits = destWidth,
-  center = false,
-  sourceX = 0,
-  sourceY = 0,
-  sourceW = source.width,
-  sourceH = source.height,
-  frameXCorrection: ViewportUnits = asViewportUnits(0),
-  frameYCorrection: ViewportUnits = asViewportUnits(0),
-  frameWidth = destWidth,
-  frameHeight = destHeight
-) {
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport')!;
-  const { ctx } = vp.dprCanvas;
-
-  const x = toProjectedPixels(
-    vp,
-    asViewportUnits(ppos.x + interp * (cpos.x - ppos.x)),
-    'x'
-  );
-  const y = toProjectedPixels(
-    vp,
-    asViewportUnits(ppos.y + interp * (cpos.y - ppos.y)),
-    'y'
-  );
-
-  const pxWidth = toPixelUnits(vp, destWidth);
-  const pxHeight = toPixelUnits(vp, destHeight);
-
-  const pxCenterWidth = toPixelUnits(vp, frameWidth);
-  const pxCenterHeight = toPixelUnits(vp, frameHeight);
-
-  ctx.save();
-  ctx.scale(1, -1);
-
-  ctx.drawImage(
-    source,
-    sourceX,
-    sourceY,
-    sourceW,
-    sourceH,
-    (center ? x - pxCenterWidth / 2 : x) + toPixelUnits(vp, frameXCorrection),
-    (center ? y - pxCenterHeight / 2 : y) + toPixelUnits(vp, frameYCorrection),
-    pxWidth,
-    pxHeight
-  );
-  ctx.restore();
-}
-
-export function drawSheetAsset(
-  vp: ViewportCmp,
-  source: HTMLImageElement,
-  interp: number,
-  cpos: ViewportUnitVector2,
+  cpos: ViewportUnitVector2, // should these be pixels too???
   ppos: ViewportUnitVector2,
   // source: the slice within the sprite sheet atlas
   sourceX: number,
@@ -375,18 +297,18 @@ export function drawSheetAsset(
   sourceH: number,
   // the offset of the trimmed slice relative to the original single sprite. aka
   // spriteSourceSize.x/y. If the sprite is not trimmed, these will be zero.
-  frameXCorrection: ViewportUnits = asViewportUnits(0),
-  frameYCorrection: ViewportUnits = asViewportUnits(0),
+  frameXCorrection: Pixels = asPixels(0),
+  frameYCorrection: Pixels = asPixels(0),
   // the size of the original single sprite. If the sprite is not trimmed, these
   // will be the same as the slice size.
-  frameWidth = toViewportUnits(vp, sourceW),
-  frameHeight = toViewportUnits(vp, sourceH),
+  frameWidth: Pixels = asPixels(sourceW),
+  frameHeight: Pixels = asPixels(sourceH),
+
   // whether to center the sprite at cpos/ppos
   center = false,
-  scale = 1
+  scaleX = vp.dprCanvas.dpr,
+  scaleY = vp.dprCanvas.dpr
 ) {
-  // const ces = useCES();
-  // const vp = ces.selectFirstData('viewport')!;
   const { ctx } = vp.dprCanvas;
 
   const x = toProjectedPixels(
@@ -400,11 +322,11 @@ export function drawSheetAsset(
     'y'
   );
 
-  const pxCenterWidth = toPixelUnits(vp, frameWidth) * scale;
-  const pxCenterHeight = toPixelUnits(vp, frameHeight) * scale;
+  const pxCenterWidth = frameWidth * scaleX;
+  const pxCenterHeight = frameHeight * scaleY;
 
-  const destX = asViewportUnits(cpos.x + frameXCorrection * scale);
-  const destY = asViewportUnits(cpos.y + frameYCorrection * scale);
+  const offsetX = frameXCorrection * scaleX;
+  const offsetY = frameYCorrection * scaleY;
 
   ctx.save();
   ctx.scale(1, -1);
@@ -414,12 +336,63 @@ export function drawSheetAsset(
     sourceY,
     sourceW,
     sourceH,
-    (center ? x - pxCenterWidth / 2 : x) + toPixelUnits(vp, destX),
-    (center ? y - pxCenterHeight / 2 : y) + toPixelUnits(vp, destY),
-    toPixelUnits(vp, asViewportUnits(sourceW * scale)),
-    toPixelUnits(vp, asViewportUnits(sourceH * scale))
+    (center ? x - pxCenterWidth / 2 : x) + offsetX,
+    (center ? y - pxCenterHeight / 2 : y) + offsetY,
+    sourceW * scaleX,
+    sourceH * scaleY
   );
   ctx.restore();
+}
+
+export function drawSheetAssetVp(
+  vp: ViewportCmp,
+  source: HTMLImageElement,
+  interp: number,
+  cpos: ViewportUnitVector2, // should these be pixels too???
+  ppos: ViewportUnitVector2,
+  // source: the slice within the sprite sheet atlas
+  sourceX: number,
+  sourceY: number,
+  sourceW: number,
+  sourceH: number,
+  // the offset of the trimmed slice relative to the original single sprite. aka
+  // spriteSourceSize.x/y. If the sprite is not trimmed, these will be zero.
+  frameXCorrection: Pixels = asPixels(0),
+  frameYCorrection: Pixels = asPixels(0),
+  // the size of the original single sprite. If the sprite is not trimmed, these
+  // will be the same as the slice size.
+  frameWidth: Pixels = asPixels(sourceW),
+  frameHeight: Pixels = asPixels(sourceH),
+
+  // whether to center the sprite at cpos/ppos
+  center = false,
+
+  destWidth: ViewportUnits = asViewportUnits(sourceW),
+  destHeight: ViewportUnits = asViewportUnits((sourceH / sourceW) * destWidth)
+) {
+  const destWidthPx = toPixelUnits(vp, destWidth);
+  const destHeightPx = toPixelUnits(vp, destHeight);
+  const scaleX = destWidthPx / frameWidth;
+  const scaleY = destHeightPx / frameHeight;
+
+  drawSheetAssetPx(
+    vp,
+    source,
+    interp,
+    cpos,
+    ppos,
+    sourceX,
+    sourceY,
+    sourceW,
+    sourceH,
+    frameXCorrection,
+    frameYCorrection,
+    frameWidth,
+    frameHeight,
+    center,
+    scaleX,
+    scaleY
+  );
 }
 
 export function deriveViewportCmp(frustrum = vv2(50, 50)): ViewportCmp {

@@ -48,3 +48,18 @@ Done automatically by `yarn start`, but perhaps you just ran `yarn zip` and want
 ## LICENSE
 
 MIT
+
+
+## DevLog
+
+### 2022-08-21 - 2022-08-24
+
+TexturePacker removed animation support from their JSON output, so I decided to switch to Aseprite for now. But it's a benefit because Aseprite allows for trimming of the sprite sheet! It makes for more complex extraction, while gaining sprite atlas space savings.
+
+### 2022-08-25
+
+Use pixels for drawing sprites
+
+### 2022-08-26
+
+Got some entities in there and debug draw them! Keyboard control is working. Refactored systems into separate files.

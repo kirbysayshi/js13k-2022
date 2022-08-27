@@ -1,8 +1,8 @@
 import { add, copy, scale, v2, Vector2 } from 'pocket-physics';
-import { DPRCanvas, makeDPRCanvas } from './canvas';
-import { usePrimaryCanvas, useRootElement } from './dom';
-import { BlackRGBA, BodyTextFont, TitleTextFont, YellowRGBA } from './theme';
-import { CES3C } from './use-ces';
+import { DPRCanvas, makeDPRCanvas } from '../canvas';
+import { usePrimaryCanvas, useRootElement } from '../dom';
+import { CES3C } from '../initialize-ces';
+import { BlackRGBA, BodyTextFont, TitleTextFont, YellowRGBA } from '../theme';
 
 type Pixels = number & { _isPixels: true };
 export function asPixels(n: number) {
@@ -21,12 +21,6 @@ export type ViewportUnitVector2 = {
 export function vv2(x: number = 0, y: number = 0) {
   return v2(x, y) as ViewportUnitVector2;
 }
-
-export type IntegratableVU = {
-  cpos: ViewportUnitVector2;
-  ppos: ViewportUnitVector2;
-  acel: ViewportUnitVector2;
-};
 
 type Camera = {
   // if mode === center, helf width offset from center
@@ -464,5 +458,3 @@ export function computeWindowResize(ces: CES3C) {
 export function initializeResize(ces: CES3C) {
   window.addEventListener('resize', () => computeWindowResize(ces));
 }
-
-

@@ -1,6 +1,3 @@
-// These keys must be quoted to force terser to keep these keys as is. It
-// doesn't know they come from the DOM Keyboard API. Prettier wants to remove
-
 import { listen } from './dom';
 
 // Represent the physical key on the keyboard (position) instead of the character itself.
@@ -16,6 +13,8 @@ type Codes =
   | 'ShiftRight'
   | 'Enter';
 
+// These keys must be quoted to force terser to keep these keys as is. It
+// doesn't know they come from the DOM Keyboard API. Prettier wants to remove
 // the quotes, so disable it.
 const keyInputs: {
   [K in Codes]: boolean;
@@ -48,6 +47,6 @@ listen(window, 'keyup', (ev) => {
   keyInputs[ev.code as Codes] = false;
 });
 
-export function useKeyInputs() {
+export function getKeyInputs() {
   return keyInputs;
 }

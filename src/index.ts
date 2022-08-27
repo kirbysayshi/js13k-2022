@@ -1,32 +1,30 @@
-import { accelerate, inertia } from 'pocket-physics';
 import ScienceHalt from 'science-halt';
 import TestPng from '../assets/00 - Fool.png';
-import { AsepriteAtlasAnimatedSprite, Assets } from './asset-map';
+import { Assets } from './asset-map';
+import { makeDefenseGoal } from './blueprints/defense-goal';
+import { makePlayer } from './blueprints/player';
 import {
   DrawStepSystem,
   DrawTimeHz,
   UpdateStepSystem,
   UpdateTimeHz,
 } from './components';
-import { createGameLoop } from './loop';
-import { useDebugMode } from './query-string';
-import { BodyTextLines, YellowRGBA } from './theme';
-import { schedule, tick } from './time';
-import { initializeCES } from './use-ces';
-import { assertDefinedFatal } from './utils';
 import {
-  asPixels,
-  asViewportUnits,
-  clearScreen,
   computeWindowResize,
-  drawSheetAssetPx,
-  drawSheetAssetVp,
-  drawTextLinesInViewport,
   initializeResize as initializeWindowResizeListener,
   moveViewportCamera,
-  predictTextHeight,
   vv2,
-} from './viewport';
+} from './components/ViewportCmp';
+import { initializeCES } from './initialize-ces';
+import { createGameLoop } from './loop';
+import { DrawClearScreenSystem } from './systems/DrawClearScreenSystem';
+import { DrawDebugFPSSystem } from './systems/DrawDebugFPSSystem';
+import { DrawDebugShapesSystem } from './systems/DrawDebugShapesSystem';
+import { DrawTestSpriteSystem } from './systems/DrawTestSpriteSystem';
+import { UpdateInputSystem } from './systems/UpdateInputSystem';
+import { UpdateMovementSystem } from './systems/UpdateMovementSystem';
+import { tick } from './time';
+import { assertDefinedFatal } from './utils';
 
 console.log(TestPng);
 
@@ -48,18 +46,8 @@ async function boot() {
   // For a good example of touch + keyboard input, see
   // https://github.com/kirbysayshi/js13k-2020/blob/master/src/ui.ts
 
-  // An entity is just a numeric ID with associated "tagged" data denoted by
-  // property 'k'. The unique names give to 'k' allow us to lookup that data
-  // and modify it.
-  const e1 = ces.entity([
-    {
-      k: 'v-movement',
-      cpos: vv2(0, 0),
-      ppos: vv2(0, 0),
-      acel: vv2(10, 0),
-    },
-    { k: 'draw-console' },
-  ]);
+  makePlayer(ces);
+  makeDefenseGoal(ces, vv2(25, 25), vv2(4, 4));
 
   // A system of an entity-component-system framework is simply a function that
   // is repeatedly called. We separate them into two types based on how often
@@ -74,112 +62,16 @@ async function boot() {
     moveViewportCamera(vp, vv2(vp.vpWidth / 2, vp.camera.frustrum.y));
   }
 
-  // Physics "system", updated at 10fps
-  updateStepSystems.push(function (ces, dt) {
-    const entities = ces.select(['v-movement']);
-    entities.forEach((e) => {
-      const cmp = ces.data(e, 'v-movement');
-      if (!cmp) return;
-      accelerate(cmp, dt);
-      inertia(cmp);
-    });
-  });
+  {
+    // fps entity
+    ces.entity([{ k: 'fps', v: 60 }]);
+  }
 
-  // clear the screen at 60fps
-  drawStepSystems.push((ces) => {
-    const vp = ces.selectFirstData('viewport');
-    assertDefinedFatal(vp);
-    clearScreen(vp);
-  });
+  updateStepSystems.push(UpdateInputSystem(), UpdateMovementSystem());
 
-  const testSprite = new AsepriteAtlasAnimatedSprite('test');
+  drawStepSystems.push(DrawClearScreenSystem(), DrawTestSpriteSystem(assets));
 
-  // Draw "system" updated at 60fps
-  drawStepSystems.push(function (ces, interp) {
-    const vp = ces.selectFirstData('viewport');
-    assertDefinedFatal(vp);
-    testSprite.tick(1000 / DrawTimeHz);
-    const frame = testSprite.getFrame();
-    if (!frame) return;
-
-    drawSheetAssetPx(
-      vp,
-      assets.getAtlas(),
-      interp,
-      vv2(0, 0),
-      vv2(0, 0),
-      frame.frame.x,
-      frame.frame.y,
-      frame.frame.w,
-      frame.frame.h,
-      asPixels(frame.spriteSourceSize.x),
-      asPixels(frame.spriteSourceSize.y),
-      asPixels(frame.sourceSize.w),
-      asPixels(frame.sourceSize.h),
-      false
-    );
-
-    drawSheetAssetVp(
-      vp,
-      assets.getAtlas(),
-      interp,
-      vv2(50, 0),
-      vv2(50, 0),
-      frame.frame.x,
-      frame.frame.y,
-      frame.frame.w,
-      frame.frame.h,
-      asPixels(frame.spriteSourceSize.x),
-      asPixels(frame.spriteSourceSize.y),
-      asPixels(frame.sourceSize.w),
-      asPixels(frame.sourceSize.h),
-      false,
-      asViewportUnits(50),
-      asViewportUnits(50)
-    );
-  });
-
-  // "draw" the position of this object to the console at 60fps
-  drawStepSystems.push(function (ces, interp) {
-    const entities = ces.select(['v-movement', 'draw-console']);
-    entities.forEach((e) => {
-      const cmp = ces.data(e, 'v-movement');
-      if (!cmp) return;
-      console.log('x', cmp.ppos.x + (cmp.cpos.x - cmp.ppos.x) * interp);
-      console.log('y', cmp.ppos.y + (cmp.cpos.y - cmp.ppos.y) * interp);
-    });
-  });
-
-  // fps entity
-  ces.entity([{ k: 'fps', v: 60 }]);
-
-  // Draw the FPS as text on the canvas
-  drawStepSystems.push((ces) => {
-    if (!useDebugMode()) return;
-
-    const vp = ces.selectFirstData('viewport');
-    const fpsData = ces.selectFirstData('fps');
-    assertDefinedFatal(vp);
-    assertDefinedFatal(fpsData);
-
-    const text = fpsData.v.toFixed(2);
-    const h = predictTextHeight(vp, text, BodyTextLines);
-    drawTextLinesInViewport(
-      vp,
-      text,
-      vv2(vp.vpWidth, -vp.vpHeight + h.total),
-      'right',
-      BodyTextLines,
-      YellowRGBA
-    );
-  });
-
-  // schedule a callback for a specified "best effort" time in the future.
-  schedule((scheduledDelay, actualDelay) => {
-    // destroy the entity after 3500 ms
-    ces.destroy(e1);
-    console.log('marked entity for destruction', e1);
-  }, 3500);
+  drawStepSystems.push(DrawDebugFPSSystem(), DrawDebugShapesSystem());
 
   const { stop } = createGameLoop({
     drawTime: 1000 / DrawTimeHz,

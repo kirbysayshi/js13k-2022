@@ -1,92 +1,16 @@
-import { AsepriteAtlasAnimatedSprite } from './asset-map';
-import { AssuredEntityId, CES3, NarrowComponent } from './ces3';
-import { CES3C } from './use-ces';
+import type { AssuredEntityId, CES3, NarrowComponent } from './ces3';
+import { AssetCmp } from './components/AssetCmp';
+import { BoundingBoxCmp } from './components/BoundingBoxCmp';
+import { CircleCmp } from './components/CircleCmp';
+import { FPSCmp } from './components/FPSCmp';
+import { MovementCmp } from './components/MovementCmp';
+import { SpringConstraintCmp } from './components/SpringConstraintCmp';
 import {
-  ViewportCmp,
-  ViewportUnits,
-  ViewportUnitVector2,
-  vv2,
-} from './viewport';
-
-export type FPSCmp = {
-  k: 'fps';
-  v: number;
-};
-
-export type CircleCmp = {
-  k: 'circle';
-  center: { x: number; y: number };
-  radius: number;
-};
-
-export type SpringConstraintCmp = {
-  k: 'spring-constraint';
-  v1: AssuredEntityId<MovementCmp>;
-  v1Mass: number;
-  v2: AssuredEntityId<MovementCmp>;
-  v2Mass: number;
-  goal: number;
-  stiffness: number;
-};
-
-export function destroySpringConstraint(
-  ces: CES3C,
-  id: AssuredEntityId<SpringConstraintCmp>
-) {
-  const data = ces.data(id, 'spring-constraint');
-  ces.destroy(id);
-  if (!data) return;
-  ces.destroy(data.v1);
-  ces.destroy(data.v2);
-}
-
-export type MovementCmp = {
-  k: 'v-movement';
-  // v1: Integratable;
-  cpos: ViewportUnitVector2;
-  ppos: ViewportUnitVector2;
-  acel: ViewportUnitVector2;
-};
-
-export type DrawConsoleCmp = {
-  k: 'draw-console';
-};
-
-export type AssetCmp = {
-  k: 'asset';
-  asset: AsepriteAtlasAnimatedSprite['tag'];
-  width: ViewportUnits;
-  height: ViewportUnits;
-};
-
-export type DrawableAssetDef = [MovementCmp, AssetCmp];
-export const drawableAssetSelector: EntityDefSelector<DrawableAssetDef> = [
-  'v-movement',
-  'asset',
-] as const;
-
-export function drawableAssetDef(
-  x: ViewportUnits,
-  y: ViewportUnits,
-  width: AssetCmp['width'],
-  height: AssetCmp['height'],
-  asset: AssetCmp['asset']
-): DrawableAssetDef {
-  return [
-    {
-      k: 'v-movement',
-      cpos: vv2(x, y),
-      ppos: vv2(x, y),
-      acel: vv2(),
-    },
-    {
-      k: 'asset',
-      asset: asset,
-      width,
-      height,
-    },
-  ];
-}
+  DebugDrawableCircleCmp,
+  DebugDrawableRectCmp,
+  UserControlledCmp,
+} from './components/Tags';
+import { ViewportCmp } from './components/ViewportCmp';
 
 export type Component =
   | FPSCmp
@@ -95,7 +19,10 @@ export type Component =
   | CircleCmp
   | ViewportCmp
   | MovementCmp
-  | DrawConsoleCmp;
+  | UserControlledCmp
+  | BoundingBoxCmp
+  | DebugDrawableCircleCmp
+  | DebugDrawableRectCmp;
 
 // NOTE: you don't really need EntityDefSelector and DefToAssuredEntityId. It's
 // easier to use AssuredEntityId<...> and keep references to the IDs. Plus the

@@ -80,13 +80,15 @@ async function boot() {
 
   drawStepSystems.push(DrawClearScreenSystem());
 
-  drawStepSystems.push(
-    DrawDebugFPSSystem(),
-    DrawDebugGridBackgroundSystem(),
-    DrawTestSpriteSystem(assets),
-    DrawDebugShapesSystem(),
-    DrawDebugCameraSystem()
-  );
+  if (process.env.NODE_ENV !== 'production') {
+    drawStepSystems.push(
+      DrawDebugFPSSystem(),
+      DrawDebugGridBackgroundSystem(),
+      DrawTestSpriteSystem(assets),
+      DrawDebugShapesSystem(),
+      DrawDebugCameraSystem()
+    );
+  }
 
   const { stop } = createGameLoop({
     drawTime: 1000 / DrawTimeHz,

@@ -1,7 +1,6 @@
 import type { AssuredEntityId, CES3, NarrowComponent } from './ces3';
 import { AssetCmp } from './components/AssetCmp';
 import { BoundingBoxCmp } from './components/BoundingBoxCmp';
-import { CircleCmp } from './components/CircleCmp';
 import { FPSCmp } from './components/FPSCmp';
 import { DragPhysCmp, MovementCmp } from './components/MovementCmp';
 import { SpringConstraintCmp } from './components/SpringConstraintCmp';
@@ -18,7 +17,6 @@ export type Component =
   | FPSCmp
   | AssetCmp
   | SpringConstraintCmp
-  | CircleCmp
   | ViewportCmp
   | MovementCmp
   | UserControlledCmp

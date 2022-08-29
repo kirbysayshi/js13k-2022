@@ -5,9 +5,11 @@ import {
   toProjectedPixels,
 } from '../components/ViewportCmp';
 import { CES3C } from '../initialize-ces';
+import { useDebugMode } from '../query-string';
 import { assertDefinedFatal } from '../utils';
 
 export const DrawDebugCameraSystem = () => (ces: CES3C) => {
+  if (!useDebugMode()) return;
   const vp = ces.selectFirstData('viewport');
   assertDefinedFatal(vp);
 

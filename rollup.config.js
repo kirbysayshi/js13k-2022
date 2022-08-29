@@ -26,6 +26,13 @@ const pluginShortenKnownStrings = () => ({
       ['drag-state', 'ds'],
       ['pointer-target', 'pt'],
       ['spring-constraint', 'sc'],
+      ['bounding-box', 'bb'],
+      ['circle-shape', 'cs'],
+      ['user-controlled', 'uc'],
+      ['debug-drawable-circle', 'ddc'],
+      ['debug-drawable-rect', 'ddr'],
+      ['enemy-miasma', 'em'],
+      ['enemy-targetable', 'et'],
     ];
 
     const shorts = new Set();

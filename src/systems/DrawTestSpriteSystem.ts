@@ -8,6 +8,7 @@ import {
   vv2,
 } from '../components/ViewportCmp';
 import { CES3C } from '../initialize-ces';
+import { useDebugMode } from '../query-string';
 import { assertDefinedFatal } from '../utils';
 
 export const DrawTestSpriteSystem =
@@ -16,6 +17,7 @@ export const DrawTestSpriteSystem =
     testSprite = new AsepriteAtlasAnimatedSprite('player-16x16#flick')
   ) =>
   (ces: CES3C, interp: number) => {
+    if (!useDebugMode()) return;
     const vp = ces.selectFirstData('viewport');
     assertDefinedFatal(vp);
     testSprite.tick(1000 / DrawTimeHz);

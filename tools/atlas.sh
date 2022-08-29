@@ -10,15 +10,18 @@
   ./assets/pipeline-input-aseprite/*.aseprite \
   --sheet-pack \
   --list-tags \
-  --filename-format '{tag}_{frame}' --trim \
+  --filename-format '{title}#{tag}' \
   --sheet ./assets/pipeline-output-aseprite/atlas.png \
   --data ./assets/pipeline-output-aseprite/atlas.json  \
-  --trim
+  --trim \
+  --format json-array
 
 # Convert the JSON output to a typescript file so the sprite names are known at compile time.
 NODE_SCRIPT=$(cat <<-END
   var atlas = fs.readFileSync("/dev/stdin","utf8");
-  const ts = "const json = " + atlas.trim() + " as const; export default json;";
+  let ts = "/** THIS IS A GENERATED FILE DO NOT EDIT */ \n";
+  ts += "const json = " + atlas.trim() + " as const; export default json; \n";
+  ts += "/** THIS IS A GENERATED FILE DO NOT EDIT */ \n";
   fs.writeFileSync("./assets/pipeline-output-aseprite/atlas.ts", ts);
 END
 )

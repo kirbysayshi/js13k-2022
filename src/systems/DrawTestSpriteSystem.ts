@@ -11,7 +11,10 @@ import { CES3C } from '../initialize-ces';
 import { assertDefinedFatal } from '../utils';
 
 export const DrawTestSpriteSystem =
-  (assets: Assets, testSprite = new AsepriteAtlasAnimatedSprite('test')) =>
+  (
+    assets: Assets,
+    testSprite = new AsepriteAtlasAnimatedSprite('player-16x16#flick')
+  ) =>
   (ces: CES3C, interp: number) => {
     const vp = ces.selectFirstData('viewport');
     assertDefinedFatal(vp);
@@ -33,7 +36,7 @@ export const DrawTestSpriteSystem =
       asPixels(frame.spriteSourceSize.y),
       asPixels(frame.sourceSize.w),
       asPixels(frame.sourceSize.h),
-      false
+      true
     );
 
     drawSheetAssetVp(
@@ -50,7 +53,7 @@ export const DrawTestSpriteSystem =
       asPixels(frame.spriteSourceSize.y),
       asPixels(frame.sourceSize.w),
       asPixels(frame.sourceSize.h),
-      false,
+      true,
       asViewportUnits(50),
       asViewportUnits(50)
     );

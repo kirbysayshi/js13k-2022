@@ -52,36 +52,74 @@ type Animation = {
 
 function collectAsepriteAtlasJSON<
   J extends typeof AtlasJson,
-  Names extends J['meta']['frameTags'][number]['name']
+  Names extends J['frames'][number]['filename']
 >(
-  json: typeof AtlasJson
+  json: J
 ): {
   [K in Names]: Animation;
 } {
-  const out: { [K in Names]?: Animation } = {};
+  type N = J['frames'][number]['filename'];
+  type Tags = N extends `${string}#${infer T}` ? T : never;
 
-  for (const tagData of json.meta.frameTags) {
-    const start = tagData.from;
-    const end = tagData.to;
-    const frames = [];
+  const out = new Map<N, Animation>();
 
-    // TS is not importing as const...
-    for (let i = start; i <= end; i++) {
-      const name = `${tagData.name}_${i}` as `${Names}_${number}`;
-      const all = AtlasJson.frames as unknown as {
-        [K in `${Names}_${number}`]: Frame;
-      };
-      const frame = all[name];
-      frames.push(frame);
+  const tagEncounteredIndex = new Map<Tags, number>();
+  let filename = null;
+
+  // loop through each frame to build up the animation data.
+  for (const frame of json.frames) {
+    const tag = frame.filename.split('#')[1] as Tags;
+
+    // There is currently a bug / unexpected behavior in Aseprite where the
+    // filename is not included in the frameTags, so there's no way to match the
+    // frameTags animation data directly with the actual frames.
+    // https://github.com/aseprite/aseprite/issues/1514
+
+    // Whenever the filename changes, mark the embedded tag name as encountered.
+    // The same tag name can be encountered multiple times across different
+    // files, but the ordering is consistent. So if the filename is
+    // `filename-001#tag-01`, later there is `filename-002#tag-01`, there will
+    // be matching and ordered `[{name: "tag-01", ...}, {name: "tag-01", ...}]`
+    // entries in `meta.frameTags`.
+    if (filename !== frame.filename) {
+      filename = frame.filename;
+
+      if (tagEncounteredIndex.has(tag)) {
+        tagEncounteredIndex.set(tag, (tagEncounteredIndex.get(tag) ?? 0) + 1);
+      } else {
+        tagEncounteredIndex.set(tag, 0);
+      }
     }
 
-    out[tagData.name as Names] = {
-      frames,
-      ...tagData,
+    // Find the matching frameTag data. If the frameTag `name` was used before,
+    // then use the next matching frameTag data in the frameTag array.
+    let frameTagEncounteredCount = 0;
+    const expectedEncounteredCount = tagEncounteredIndex.get(tag) ?? 0;
+    const frameTagData = json.meta.frameTags.find((t) => {
+      if (t.name === tag) {
+        if (expectedEncounteredCount === frameTagEncounteredCount) return true;
+        else {
+          frameTagEncounteredCount++;
+          return false;
+        }
+      }
+    });
+
+    // We know it has to be here, otherwise the data is somehow corrupted.
+    assertDefinedFatal(frameTagData);
+
+    const anim = out.get(frame.filename) ?? {
+      frames: [],
+      ...frameTagData,
     };
+
+    anim.frames.push(frame);
+
+    out.set(frame.filename, anim);
   }
 
-  return out as {
+  // Hack the types so that the names are known at compile time.
+  return Object.fromEntries(out.entries()) as {
     [K in Names]: Animation;
   };
 }

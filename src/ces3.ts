@@ -38,6 +38,11 @@ export type AssuredBorrowedEntityId<ED extends EntityData> =
   };
 
 /**
+ * Extract the EntityId type from a known selection
+ */
+export type SelectionEntityId<T> = T extends Set<infer I> ? I : never;
+
+/**
  * Take an entity id with multiple data types, like v-movement | something-else,
  * and narrow it to just K. Useful when assigning an entityId to a function
  * signature or other type.
@@ -192,7 +197,7 @@ export class CES3<ED extends EntityData> {
   data<T extends ED, K extends T['k']>(
     eid: AssuredEntityId<T> | undefined,
     kind: K
-  ) {
+  ): NarrowComponent<T, K> | undefined {
     if (!eid || eid.destroyed) return;
     const datas = this.cmpToIdArr.get(kind);
     if (process.env.NODE_ENV !== 'production') {
@@ -240,13 +245,19 @@ export class CES3<ED extends EntityData> {
     >;
   }
 
-  has<ExistingComponents extends ED>(
+  /**
+   * Returns the entity data if the entity has a specific component kind,
+   * otherwise null. Use this to allow a system to have optional effects when
+   * extra data is present.
+   */
+  has<T extends ED, K extends T['k']>(
     eid: EntityId,
-    kind: ExistingComponents['k']
-  ) {
+    kind: K
+  ): NarrowComponent<T, K> | null {
     const datas = this.cmpToIdArr.get(kind);
-    if (eid.destroyed || !datas || !datas[eid.id]) return false;
-    return true;
+    const data = datas?.[eid.id];
+    if (eid.destroyed || !datas || !data) return null;
+    return data as NarrowComponent<T, K>;
   }
 
   select<T extends ED['k']>(kinds: T[] | readonly T[]) {

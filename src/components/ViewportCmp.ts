@@ -322,7 +322,14 @@ export function drawSheetAssetPx(
   const offsetX = frameXCorrection * scaleX;
   const offsetY = frameYCorrection * scaleY;
 
+  // We are going to flip the coordinate system again to ensure the image is in
+  // the correct orientation. Therefore, +y becomes "down" again.
+  const destX = (center ? x - pxCenterWidth / 2 : x) + offsetX;
+  const destY = (center ? y + pxCenterHeight / 2 : y) - offsetY;
+
+  // TODO: save+restore for every sprite... oof.
   ctx.save();
+  ctx.translate(destX, destY);
   ctx.scale(1, -1);
   ctx.drawImage(
     source,
@@ -330,8 +337,8 @@ export function drawSheetAssetPx(
     sourceY,
     sourceW,
     sourceH,
-    (center ? x - pxCenterWidth / 2 : x) + offsetX,
-    (center ? y - pxCenterHeight / 2 : y) + offsetY,
+    0,
+    0,
     sourceW * scaleX,
     sourceH * scaleY
   );

@@ -11,5 +11,6 @@ export function makeDefenseGoal(
     makeMovementCmp(pos),
     { k: 'bounding-box', wh },
     { k: 'debug-drawable-rect' },
+    { k: 'enemy-targetable' },
   ]);
 }

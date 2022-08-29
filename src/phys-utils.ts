@@ -26,10 +26,6 @@ export function makePointEdgeProjectionResult(): PointEdgeProjection {
   };
 }
 
-export function vd(v: Vector2) {
-  return `(${v.x}, ${v.y})`;
-}
-
 // preallocations
 const v = v2();
 const direction = v2();
@@ -47,8 +43,4 @@ export function projectCposWithRadius(
   scale(radiusSegment, direction, radius);
   add(out, radiusSegment, p.cpos);
   return out;
-}
-
-export function angleOf(v: Vector2) {
-  return Math.atan2(v.y, v.x);
 }

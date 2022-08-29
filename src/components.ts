@@ -3,11 +3,13 @@ import { AssetCmp } from './components/AssetCmp';
 import { BoundingBoxCmp } from './components/BoundingBoxCmp';
 import { CircleCmp } from './components/CircleCmp';
 import { FPSCmp } from './components/FPSCmp';
-import { MovementCmp } from './components/MovementCmp';
+import { DragPhysCmp, MovementCmp } from './components/MovementCmp';
 import { SpringConstraintCmp } from './components/SpringConstraintCmp';
 import {
   DebugDrawableCircleCmp,
   DebugDrawableRectCmp,
+  EnemyMiasmaCmp,
+  EnemyTargetableCmp,
   UserControlledCmp,
 } from './components/Tags';
 import { ViewportCmp } from './components/ViewportCmp';
@@ -22,7 +24,10 @@ export type Component =
   | UserControlledCmp
   | BoundingBoxCmp
   | DebugDrawableCircleCmp
-  | DebugDrawableRectCmp;
+  | DebugDrawableRectCmp
+  | EnemyMiasmaCmp
+  | EnemyTargetableCmp
+  | DragPhysCmp;
 
 // NOTE: you don't really need EntityDefSelector and DefToAssuredEntityId. It's
 // easier to use AssuredEntityId<...> and keep references to the IDs. Plus the

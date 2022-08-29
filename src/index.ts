@@ -2,6 +2,7 @@ import ScienceHalt from 'science-halt';
 import TestPng from '../assets/00 - Fool.png';
 import { Assets } from './asset-map';
 import { makeDefenseGoal } from './blueprints/defense-goal';
+import { makeEnemy } from './blueprints/enemy';
 import { makePlayer } from './blueprints/player';
 import {
   DrawStepSystem,
@@ -18,9 +19,12 @@ import {
 import { initializeCES } from './initialize-ces';
 import { createGameLoop } from './loop';
 import { DrawClearScreenSystem } from './systems/DrawClearScreenSystem';
+import { DrawDebugCameraSystem } from './systems/DrawDebugCameraSystem';
 import { DrawDebugFPSSystem } from './systems/DrawDebugFPSSystem';
+import { DrawDebugGridBackgroundSystem } from './systems/DrawDebugGridBackgroundSystem';
 import { DrawDebugShapesSystem } from './systems/DrawDebugShapesSystem';
 import { DrawTestSpriteSystem } from './systems/DrawTestSpriteSystem';
+import { UpdateEnemyMiasmaSystem } from './systems/UpdateEnemyMiasmaSystem';
 import { UpdateInputSystem } from './systems/UpdateInputSystem';
 import { UpdateMovementSystem } from './systems/UpdateMovementSystem';
 import { tick } from './time';
@@ -46,8 +50,9 @@ async function boot() {
   // For a good example of touch + keyboard input, see
   // https://github.com/kirbysayshi/js13k-2020/blob/master/src/ui.ts
 
-  makePlayer(ces);
+  makePlayer(ces, vv2(25, 0));
   makeDefenseGoal(ces, vv2(25, 25), vv2(4, 4));
+  makeEnemy(ces, vv2(75, 98));
 
   // A system of an entity-component-system framework is simply a function that
   // is repeatedly called. We separate them into two types based on how often
@@ -67,11 +72,21 @@ async function boot() {
     ces.entity([{ k: 'fps', v: 60 }]);
   }
 
-  updateStepSystems.push(UpdateInputSystem(), UpdateMovementSystem());
+  updateStepSystems.push(
+    UpdateInputSystem(),
+    UpdateEnemyMiasmaSystem(),
+    UpdateMovementSystem()
+  );
 
-  drawStepSystems.push(DrawClearScreenSystem(), DrawTestSpriteSystem(assets));
+  drawStepSystems.push(DrawClearScreenSystem());
 
-  drawStepSystems.push(DrawDebugFPSSystem(), DrawDebugShapesSystem());
+  drawStepSystems.push(
+    DrawDebugFPSSystem(),
+    DrawDebugGridBackgroundSystem(),
+    DrawTestSpriteSystem(assets),
+    DrawDebugShapesSystem(),
+    DrawDebugCameraSystem()
+  );
 
   const { stop } = createGameLoop({
     drawTime: 1000 / DrawTimeHz,

@@ -9,6 +9,11 @@ export type MovementCmp = {
   acel: ViewportUnitVector2;
 };
 
+export type DragPhysCmp = {
+  k: 'drag-phys';
+  drag: number;
+};
+
 export function makeMovementCmp(pos: ViewportUnitVector2): MovementCmp {
   return {
     k: 'v-movement',

@@ -63,3 +63,11 @@ Use pixels for drawing sprites
 ### 2022-08-26
 
 Got some entities in there and debug draw them! Keyboard control is working. Refactored systems into separate files.
+
+### 2022-08-28
+
+Adding an enemy that moves towards a target and the player.
+
+Found a bug where the sprite sheet was drawing at the wrong (flipped) y, resulting in completely wrong results.
+
+Aseprite has some missing behavior where frame tags are embedded in the atlas without any filename data. So the collection code needed to be rewritten to instead iterate through the frames and track how many times a specific tag had been encountered. Luckily the frame tags are still ordered!

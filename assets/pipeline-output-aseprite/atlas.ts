@@ -82,7 +82,7 @@ const json = { "frames": [
     "duration": 200
    },
    {
-    "filename": "player-16x16#standing",
+    "filename": "player-16x16#flick",
     "frame": { "x": 18, "y": 0, "w": 8, "h": 12 },
     "rotated": false,
     "trimmed": true,
@@ -125,6 +125,15 @@ const json = { "frames": [
     "spriteSourceSize": { "x": 0, "y": 8, "w": 8, "h": 8 },
     "sourceSize": { "w": 16, "h": 16 },
     "duration": 200
+   },
+   {
+    "filename": "player-16x16#standing",
+    "frame": { "x": 18, "y": 0, "w": 8, "h": 12 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 4, "y": 2, "w": 8, "h": 12 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 200
    }
  ],
  "meta": {
@@ -138,8 +147,8 @@ const json = { "frames": [
    { "name": "walk", "from": 0, "to": 3, "direction": "forward" },
    { "name": "walk", "from": 0, "to": 3, "direction": "forward" },
    { "name": "flick", "from": 4, "to": 5, "direction": "forward" },
-   { "name": "standing", "from": 5, "to": 5, "direction": "forward" },
-   { "name": "test", "from": 6, "to": 9, "direction": "forward" }
+   { "name": "test", "from": 6, "to": 9, "direction": "forward" },
+   { "name": "standing", "from": 10, "to": 10, "direction": "forward" }
   ]
  }
 } as const; export default json; 

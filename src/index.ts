@@ -1,5 +1,4 @@
 import ScienceHalt from 'science-halt';
-import TestPng from '../assets/00 - Fool.png';
 import { Assets } from './asset-map';
 import { makeDefenseGoal } from './blueprints/defense-goal';
 import { makeEnemy } from './blueprints/enemy';
@@ -30,9 +29,8 @@ import { UpdateHealthSystem } from './systems/UpdateHealthSystem';
 import { UpdateInputSystem } from './systems/UpdateInputSystem';
 import { UpdateMovementSystem } from './systems/UpdateMovementSystem';
 import { tick } from './time';
+import { showUIControls, syncCss, wireUI } from './ui';
 import { assertDefinedFatal } from './utils';
-
-console.log(TestPng);
 
 async function boot() {
   const assets = new Assets();
@@ -92,6 +90,14 @@ async function boot() {
       DrawDebugShapesSystem(),
       DrawDebugCameraSystem()
     );
+  }
+
+  {
+    const vp = ces.selectFirstData('viewport');
+    assertDefinedFatal(vp);
+    syncCss(vp);
+    showUIControls();
+    wireUI();
   }
 
   const { stop } = createGameLoop({

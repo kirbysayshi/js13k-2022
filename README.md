@@ -77,3 +77,5 @@ Added an enemy that moves towards a target and the player. It's kite-able by the
 Added a super basic "ability" that puts a dot on the field whenever you hit `1`.
 
 An enemy is slowed down and can damage an obstacle! Eventually the obstacle becomes destroyed.
+
+Brought in analog sticks again.

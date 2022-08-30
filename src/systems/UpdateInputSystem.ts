@@ -1,4 +1,4 @@
-import { add, rotate2d, solveDrag } from 'pocket-physics';
+import { add, angleOf, rotate2d, set, solveDrag } from 'pocket-physics';
 import { makePlayerPlacedObstacle } from '../blueprints/player-placed-obstacle';
 import {
   activateCooldownCmp,
@@ -7,11 +7,13 @@ import {
 import { vv2 } from '../components/ViewportCmp';
 import { CES3C } from '../initialize-ces';
 import { getKeyInputs } from '../keys';
+import { getUIState } from '../ui';
 import { assertDefinedFatal } from '../utils';
 
 export const UpdateInputSystem = () => (ces: CES3C, dt: number) => {
   const entities = ces.select(['v-movement', 'user-controlled']);
   const keyInputs = getKeyInputs();
+  const ui = getUIState();
 
   let angle = 0;
   if (keyInputs.KeyW && keyInputs.KeyD) angle = Math.PI / 4;
@@ -25,17 +27,32 @@ export const UpdateInputSystem = () => (ces: CES3C, dt: number) => {
 
   const origin = vv2();
   const maxAcel = vv2(0.2, 0);
-  const acel = rotate2d(vv2(), maxAcel, origin, angle);
   const drag = 0.5;
 
-  // TODO: add in on-screen stick controls like signal-decay
-  const shouldAcceptMove = angle !== 0 || (angle === 0 && keyInputs.KeyD);
+  const moveStickIsActive = ui.move.x !== 0 && ui.move.y !== 0;
+  const moveStickAngle = angleOf(ui.move);
+
+  if (moveStickIsActive) angle = moveStickAngle;
+
+  const moveAcel = rotate2d(vv2(), maxAcel, origin, angle);
+
+  // Scale movement by stick percent
+  if (moveStickIsActive) {
+    set(
+      moveAcel,
+      moveAcel.x * Math.abs(ui.move.x),
+      moveAcel.y * Math.abs(ui.move.y)
+    );
+  }
+
+  const shouldAcceptMove =
+    angle !== 0 || (angle === 0 && keyInputs.KeyD) || moveStickIsActive;
 
   for (const e of entities) {
     const mv = ces.data(e, 'v-movement');
     assertDefinedFatal(mv);
-    if (shouldAcceptMove) add(mv.acel, mv.acel, acel);
-    else solveDrag(mv, drag);
+    if (shouldAcceptMove) add(mv.acel, mv.acel, moveAcel);
+    solveDrag(mv, drag);
 
     // TODO: need the cooldown to be attached to an ability component
     if (keyInputs.Digit1) {

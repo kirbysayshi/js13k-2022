@@ -11,33 +11,20 @@ type Codes =
   | 'ArrowLeft'
   | 'ShiftLeft'
   | 'ShiftRight'
-  | 'Enter';
+  | 'Enter'
+  | 'Digit1'
+  | 'Digit2'
+  | 'Digit3'
+  | 'Digit4'
+  | 'Digit5'
+  | 'Digit6'
+  | 'Digit7';
 
-// These keys must be quoted to force terser to keep these keys as is. It
-// doesn't know they come from the DOM Keyboard API. Prettier wants to remove
-// the quotes, so disable it.
-const keyInputs: {
-  [K in Codes]: boolean;
-} = {
-  // prettier-ignore
-  'KeyW': false,
-  // prettier-ignore
-  'KeyA': false,
-  // prettier-ignore
-  'KeyS': false,
-  // prettier-ignore
-  'KeyD': false,
-  // prettier-ignore
-  'ArrowLeft': false,
-  // prettier-ignore
-  'ArrowRight': false,
-  // prettier-ignore
-  'ShiftLeft': false,
-  // prettier-ignore
-  'ShiftRight': false,
-  // prettier-ignore
-  'Enter': false,
+type KeyDownState = {
+  [K in Codes]?: boolean;
 };
+
+const keyInputs: KeyDownState = {};
 
 listen(window, 'keydown', (ev) => {
   keyInputs[ev.code as Codes] = true;

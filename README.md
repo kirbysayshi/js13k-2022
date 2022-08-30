@@ -71,3 +71,9 @@ Found a bug where the sprite sheet was drawing at the wrong (flipped) y, resulti
 Aseprite has some missing behavior where frame tags are embedded in the atlas without any filename data. So the collection code needed to be rewritten to instead iterate through the frames and track how many times a specific tag had been encountered. Luckily the frame tags are still ordered!
 
 Added an enemy that moves towards a target and the player. It's kite-able by the player!
+
+### 2022-08-29
+
+Added a super basic "ability" that puts a dot on the field whenever you hit `1`.
+
+An enemy is slowed down and can damage an obstacle! Eventually the obstacle becomes destroyed.

@@ -33,6 +33,9 @@ const pluginShortenKnownStrings = () => ({
       ['debug-drawable-rect', 'ddr'],
       ['enemy-miasma', 'em'],
       ['enemy-targetable', 'et'],
+      ['impedance-value', 'imv'],
+      ['health-value', 'hv'],
+      ['enemy-impedance', 'eim'],
     ];
 
     const shorts = new Set();

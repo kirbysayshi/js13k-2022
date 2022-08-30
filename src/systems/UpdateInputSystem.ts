@@ -1,4 +1,9 @@
 import { add, rotate2d, solveDrag } from 'pocket-physics';
+import { makePlayerPlacedObstacle } from '../blueprints/player-placed-obstacle';
+import {
+  activateCooldownCmp,
+  makeCooldownCmp,
+} from '../components/CooldownCmp';
 import { vv2 } from '../components/ViewportCmp';
 import { CES3C } from '../initialize-ces';
 import { getKeyInputs } from '../keys';
@@ -31,5 +36,21 @@ export const UpdateInputSystem = () => (ces: CES3C, dt: number) => {
     assertDefinedFatal(mv);
     if (shouldAcceptMove) add(mv.acel, mv.acel, acel);
     else solveDrag(mv, drag);
+
+    // TODO: need the cooldown to be attached to an ability component
+    if (keyInputs.Digit1) {
+      let cmp = ces.has(e, 'cooldown');
+      if (!cmp) {
+        ces.add(e, makeCooldownCmp(100, 0));
+        cmp = ces.has(e, 'cooldown');
+      }
+
+      assertDefinedFatal(cmp);
+
+      if (cmp.remainingMs === 0) {
+        makePlayerPlacedObstacle(ces, mv.cpos, 100, 1);
+        activateCooldownCmp(cmp);
+      }
+    }
   }
 };

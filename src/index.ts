@@ -24,7 +24,9 @@ import { DrawDebugFPSSystem } from './systems/DrawDebugFPSSystem';
 import { DrawDebugGridBackgroundSystem } from './systems/DrawDebugGridBackgroundSystem';
 import { DrawDebugShapesSystem } from './systems/DrawDebugShapesSystem';
 import { DrawTestSpriteSystem } from './systems/DrawTestSpriteSystem';
+import { UpdateCooldownSystem } from './systems/UpdateCooldownSystem';
 import { UpdateEnemyMiasmaSystem } from './systems/UpdateEnemyMiasmaSystem';
+import { UpdateHealthSystem } from './systems/UpdateHealthSystem';
 import { UpdateInputSystem } from './systems/UpdateInputSystem';
 import { UpdateMovementSystem } from './systems/UpdateMovementSystem';
 import { tick } from './time';
@@ -73,9 +75,11 @@ async function boot() {
   }
 
   updateStepSystems.push(
+    UpdateCooldownSystem(),
     UpdateInputSystem(),
     UpdateEnemyMiasmaSystem(),
-    UpdateMovementSystem()
+    UpdateMovementSystem(),
+    UpdateHealthSystem()
   );
 
   drawStepSystems.push(DrawClearScreenSystem());

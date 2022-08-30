@@ -6,7 +6,7 @@
     "dist"
   ],
   "dependencies": {
-    "pocket-physics": "^10.2.0",
+    "pocket-physics": "^11.0.0",
     "science-halt": "^0.2.0"
   },
   "devDependencies": {

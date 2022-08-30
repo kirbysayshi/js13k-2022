@@ -1,12 +1,16 @@
 import type { AssuredEntityId, CES3, NarrowComponent } from './ces3';
 import { AssetCmp } from './components/AssetCmp';
 import { BoundingBoxCmp } from './components/BoundingBoxCmp';
+import { CooldownCmp } from './components/CooldownCmp';
 import { FPSCmp } from './components/FPSCmp';
+import { HealthCmp } from './components/HealthCmp';
+import { ImpedanceCmp } from './components/ImpedanceCmp';
 import { DragPhysCmp, MovementCmp } from './components/MovementCmp';
 import { SpringConstraintCmp } from './components/SpringConstraintCmp';
 import {
   DebugDrawableCircleCmp,
   DebugDrawableRectCmp,
+  EnemyImpedanceCmp,
   EnemyMiasmaCmp,
   EnemyTargetableCmp,
   UserControlledCmp,
@@ -25,7 +29,11 @@ export type Component =
   | DebugDrawableRectCmp
   | EnemyMiasmaCmp
   | EnemyTargetableCmp
-  | DragPhysCmp;
+  | DragPhysCmp
+  | CooldownCmp
+  | HealthCmp
+  | ImpedanceCmp
+  | EnemyImpedanceCmp;
 
 // NOTE: you don't really need EntityDefSelector and DefToAssuredEntityId. It's
 // easier to use AssuredEntityId<...> and keep references to the IDs. Plus the

@@ -4323,10 +4323,10 @@ pkg-dir@^4.1.0, pkg-dir@^4.2.0:
   dependencies:
     find-up "^4.0.0"
 
-pocket-physics@^10.2.0:
-  version "10.2.0"
-  resolved "https://registry.yarnpkg.com/pocket-physics/-/pocket-physics-10.2.0.tgz#f9fc71b9210573057dac0a6416516750c553099b"
-  integrity sha512-WticNY/mep+DadMNwvUH5yP4tdiDknKtHQQzYPyzWzGvvGlvbD0+f7JsjLcBxxl6dQj6sSc9/a06/yONr9HL5Q==
+pocket-physics@^11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/pocket-physics/-/pocket-physics-11.0.0.tgz#cf75871be69ab229b75459584c5de0f8f2870bc2"
+  integrity sha512-wRI78TRalGGWUmLvkRYftfMbtHAsbHTIAUYk7VVPppRulbQKG8FLhY+Wgt8pIbcb4ix7AYBI0ytEw8CWdPZ+Nw==
 
 portfinder@^1.0.28:
   version "1.0.32"

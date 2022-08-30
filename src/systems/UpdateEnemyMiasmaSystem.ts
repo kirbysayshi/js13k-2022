@@ -1,26 +1,82 @@
-import { add, distance2, normalize, scale, sub } from 'pocket-physics';
+import {
+  add,
+  createAABBOverlapResult,
+  distance2,
+  normalize,
+  overlapAABBAABB,
+  scale,
+  sub,
+} from 'pocket-physics';
 import { AssuredEntityId } from '../ces3';
+import { decHealth } from '../components/HealthCmp';
 import { MovementCmp } from '../components/MovementCmp';
 import { EnemyTargetableCmp } from '../components/Tags';
-import { vv2 } from '../components/ViewportCmp';
+import { ViewportUnits, vv2 } from '../components/ViewportCmp';
 import { CES3C } from '../initialize-ces';
 import { assertDefinedFatal } from '../utils';
 
-// Preallocate to avoid needing potentially hundreds of these per tick.
+// BEGIN: Preallocate to avoid needing potentially hundreds of these per tick.
 const dir = vv2();
 const enemyAcel = vv2();
 const closest: [
   AssuredEntityId<MovementCmp | EnemyTargetableCmp> | null,
   number | null
 ] = [null, null];
+const aabbOverlapResult = createAABBOverlapResult<ViewportUnits>();
+// END: Preallocate
 
 export const UpdateEnemyMiasmaSystem = () => (ces: CES3C, dt: number) => {
-  const entities = ces.select(['v-movement', 'enemy-miasma']);
+  const entities = ces.select(['v-movement', 'enemy-miasma', 'bounding-box']);
   const targets = ces.select(['v-movement', 'enemy-targetable']);
+
+  const obstacles = ces.select([
+    'v-movement',
+    'enemy-impedance',
+    'impedance-value',
+    'bounding-box',
+    'health-value',
+  ]);
 
   entities.forEach((e) => {
     const emv = ces.data(e, 'v-movement');
+    const ebb = ces.data(e, 'bounding-box');
     assertDefinedFatal(emv);
+    assertDefinedFatal(ebb);
+
+    // if enemy is colliding with an obstacle, apply impedance (0-1)!
+    let impedance = 0;
+
+    for (const oid of obstacles) {
+      const omv = ces.data(oid, 'v-movement');
+      const obb = ces.data(oid, 'bounding-box');
+      const oim = ces.data(oid, 'impedance-value');
+      const ohh = ces.data(oid, 'health-value');
+      assertDefinedFatal(omv);
+      assertDefinedFatal(obb);
+      assertDefinedFatal(oim);
+      assertDefinedFatal(ohh);
+
+      const isOverlapping = overlapAABBAABB(
+        emv.cpos.x,
+        emv.cpos.y,
+        ebb.wh.x,
+        ebb.wh.y,
+        omv.cpos.x,
+        omv.cpos.y,
+        obb.wh.x,
+        obb.wh.y,
+        aabbOverlapResult
+      );
+
+      if (isOverlapping) {
+        // Use the "last" value only
+        impedance = oim.value;
+
+        // Decrement health of the obstacle, they are fragile :)
+        const attack = 1; // TODO: make this part of the enemy data
+        decHealth(ohh, attack);
+      }
+    }
 
     closest[0] = closest[1] = null;
 
@@ -48,7 +104,7 @@ export const UpdateEnemyMiasmaSystem = () => (ces: CES3C, dt: number) => {
     normalize(dir, dir);
 
     // TODO: probably want this attached to the enemy tag so it can be configurable
-    const enemySpeed = 0.1;
+    const enemySpeed = 0.1 * (1 - impedance);
     scale(enemyAcel, dir, enemySpeed);
     add(emv.acel, emv.acel, enemyAcel);
   });

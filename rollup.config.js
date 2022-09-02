@@ -60,7 +60,10 @@ const pluginShortenKnownStrings = () => ({
 // in V8.
 const pluginRemoveTypescriptAssertions = () => ({
   renderChunk(chunk) {
-    return chunk.replace(/(?<!function )assertDefinedFatal\([^)]+\)/g, '');
+    return chunk.replace(
+      /(?<!function )(assertDefinedFatal|assertExhaustive)\([^)]+\)/g,
+      ''
+    );
   },
 });
 

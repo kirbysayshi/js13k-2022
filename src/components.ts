@@ -3,6 +3,7 @@ import { AssetCmp } from './components/AssetCmp';
 import { BoundingBoxCmp } from './components/BoundingBoxCmp';
 import { CooldownCmp } from './components/CooldownCmp';
 import { FPSCmp } from './components/FPSCmp';
+import { GameDataCmp } from './components/GameCmp';
 import { HealthCmp } from './components/HealthCmp';
 import { ImpedanceCmp } from './components/ImpedanceCmp';
 import { DragPhysCmp, MovementCmp } from './components/MovementCmp';
@@ -33,7 +34,8 @@ export type Component =
   | CooldownCmp
   | HealthCmp
   | ImpedanceCmp
-  | EnemyImpedanceCmp;
+  | EnemyImpedanceCmp
+  | GameDataCmp;
 
 // NOTE: you don't really need EntityDefSelector and DefToAssuredEntityId. It's
 // easier to use AssuredEntityId<...> and keep references to the IDs. Plus the

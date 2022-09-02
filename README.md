@@ -79,3 +79,11 @@ Added a super basic "ability" that puts a dot on the field whenever you hit `1`.
 An enemy is slowed down and can damage an obstacle! Eventually the obstacle becomes destroyed.
 
 Brought in analog sticks again.
+
+### 2022-08-30
+
+The player and defense targets can die.
+
+The game will restart! There are levels, and the systems are initialized by the levels themselves rather than being global.
+
+I think I'm going to call this "Paint a Picture of Death", and the goal will be to create a nice painting as you replace all the miasma with plants.

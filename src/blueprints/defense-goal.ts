@@ -1,3 +1,4 @@
+import { makeHealthCmp } from '../components/HealthCmp';
 import { makeMovementCmp } from '../components/MovementCmp';
 import { ViewportUnitVector2 } from '../components/ViewportCmp';
 import { CES3C } from '../initialize-ces';
@@ -12,5 +13,6 @@ export function makeDefenseGoal(
     { k: 'bounding-box', wh },
     { k: 'debug-drawable-rect' },
     { k: 'enemy-targetable' },
+    makeHealthCmp(1000),
   ]);
 }

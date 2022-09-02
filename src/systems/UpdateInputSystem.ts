@@ -36,6 +36,7 @@ export const UpdateInputSystem = () => (ces: CES3C, dt: number) => {
 
   const moveAcel = rotate2d(vv2(), maxAcel, origin, angle);
 
+  // TODO: there is a bug where flicking somehow exceeds the max acel
   // Scale movement by stick percent
   if (moveStickIsActive) {
     set(

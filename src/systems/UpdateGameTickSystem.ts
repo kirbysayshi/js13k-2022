@@ -13,6 +13,7 @@ import { UpdateEnemyMiasmaSystem } from './UpdateEnemyMiasmaSystem';
 import { UpdateHealthSystem } from './UpdateHealthSystem';
 import { UpdateInputSystem } from './UpdateInputSystem';
 import { UpdateMovementSystem } from './UpdateMovementSystem';
+import { UpdateSolveOverlapsSystem } from './UpdateSolveOverlapsSystem';
 
 export const UpdateGameTickSystem =
   (assets: Assets) => (ces: CES3C, dt: number) => {
@@ -32,6 +33,7 @@ export const UpdateGameTickSystem =
             UpdateInputSystem(),
             UpdateEnemyMiasmaSystem(),
             UpdateMovementSystem(),
+            UpdateSolveOverlapsSystem(),
             UpdateHealthSystem()
           );
 

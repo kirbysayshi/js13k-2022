@@ -13,10 +13,7 @@ export type ViewportUnits<T = number> = T & { _isViewportUnits: true };
 export function asViewportUnits(n: number) {
   return n as ViewportUnits;
 }
-export type ViewportUnitVector2 = {
-  x: ViewportUnits;
-  y: ViewportUnits;
-};
+export type ViewportUnitVector2 = Vector2<ViewportUnits>;
 
 export function vv2(x: number = 0, y: number = 0) {
   return v2(x, y) as ViewportUnitVector2;

@@ -2,17 +2,20 @@ import type { AssuredEntityId, CES3, NarrowComponent } from './ces3';
 import { AssetCmp } from './components/AssetCmp';
 import { BoundingBoxCmp } from './components/BoundingBoxCmp';
 import { CooldownCmp } from './components/CooldownCmp';
+import { EnemyMiasmaCmp } from './components/EnemyMiasmaCmp';
 import { FPSCmp } from './components/FPSCmp';
 import { GameDataCmp } from './components/GameCmp';
 import { HealthCmp } from './components/HealthCmp';
 import { ImpedanceCmp } from './components/ImpedanceCmp';
+import { MassCmp } from './components/MassCmp';
 import { DragPhysCmp, MovementCmp } from './components/MovementCmp';
 import { SpringConstraintCmp } from './components/SpringConstraintCmp';
 import {
+  CollisionGroup001,
+  CollisionGroup002,
   DebugDrawableCircleCmp,
   DebugDrawableRectCmp,
   EnemyImpedanceCmp,
-  EnemyMiasmaCmp,
   EnemyTargetableCmp,
   UserControlledCmp,
 } from './components/Tags';
@@ -35,7 +38,10 @@ export type Component =
   | HealthCmp
   | ImpedanceCmp
   | EnemyImpedanceCmp
-  | GameDataCmp;
+  | GameDataCmp
+  | CollisionGroup001
+  | CollisionGroup002
+  | MassCmp;
 
 // NOTE: you don't really need EntityDefSelector and DefToAssuredEntityId. It's
 // easier to use AssuredEntityId<...> and keep references to the IDs. Plus the

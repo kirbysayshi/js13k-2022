@@ -45,8 +45,10 @@ export const UpdateEnemyMiasmaSystem = () => (ces: CES3C, dt: number) => {
   entities.forEach((e) => {
     const emv = ces.data(e, 'v-movement');
     const ebb = ces.data(e, 'bounding-box');
+    const emm = ces.data(e, 'enemy-miasma');
     assertDefinedFatal(emv);
     assertDefinedFatal(ebb);
+    assertDefinedFatal(emm);
 
     // if enemy is colliding with an obstacle, apply impedance (0-1)!
     let impedance = 0;
@@ -78,8 +80,7 @@ export const UpdateEnemyMiasmaSystem = () => (ces: CES3C, dt: number) => {
         impedance = oim.value;
 
         // Decrement health of the obstacle, they are fragile :)
-        const attack = 1; // TODO: make this part of the enemy data
-        decHealth(ohh, attack);
+        decHealth(ohh, emm.attack);
       }
     }
 
@@ -110,9 +111,7 @@ export const UpdateEnemyMiasmaSystem = () => (ces: CES3C, dt: number) => {
       );
 
       if (isOverlapping && thv) {
-        // TODO: make this part of the enemy data
-        const attack = 1;
-        decHealth(thv, attack);
+        decHealth(thv, emm.attack);
       }
     }
 
@@ -129,8 +128,8 @@ export const UpdateEnemyMiasmaSystem = () => (ces: CES3C, dt: number) => {
     sub(dir, mv.cpos, emv.cpos);
     normalize(dir, dir);
 
-    // TODO: probably want this attached to the enemy tag so it can be configurable
-    const enemySpeed = 0.1 * (1 - impedance);
+    // Move enemy
+    const enemySpeed = emm.speed * (1 - impedance);
     scale(enemyAcel, dir, enemySpeed);
     add(emv.acel, emv.acel, enemyAcel);
   });

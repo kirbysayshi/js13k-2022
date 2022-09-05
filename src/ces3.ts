@@ -28,10 +28,29 @@ function isBorrowedEntityId(obj: any): obj is BorrowedEntityId {
   return id && obj.owned === false;
 }
 
+export function borrowEntityId(id: EntityId) {
+  const next: BorrowedEntityId = { ...id, owned: false };
+  return next;
+}
+
+export function borrowAssuredEntityId<C extends EntityData>(
+  id: AssuredEntityId<C>
+) {
+  const next: AssuredBorrowedEntityId<C> = { ...id, owned: false };
+  return next;
+}
+
 export type NarrowComponent<T, N> = T extends { k: N } ? T : never;
+
+// TODO: AssuredEntityId<A|B> is not allowed to be passed to a function that
+// only has AssuredEntityId<A>. This is annoying and makes the types less
+// helpful. How to solve? Should the assured tags be actually specified on the
+// Id during runtime?
+
 export type AssuredEntityId<ED extends EntityData> = EntityId & {
   _assured: ED;
 };
+
 export type AssuredBorrowedEntityId<ED extends EntityData> =
   BorrowedEntityId & {
     _assured: ED;
@@ -54,17 +73,7 @@ export function narrowAssuredEntityId<C extends EntityData, K extends C['k']>(
   return eid as AssuredEntityId<NarrowComponent<C, typeof k>>;
 }
 
-export function borrowEntityId(id: EntityId) {
-  const next: BorrowedEntityId = { ...id, owned: false };
-  return next;
-}
 
-export function borrowAssuredEntityId<C extends EntityData>(
-  id: AssuredEntityId<C>
-) {
-  const next: AssuredBorrowedEntityId<C> = { ...id, owned: false };
-  return next;
-}
 
 type EntityData = {
   k: string;

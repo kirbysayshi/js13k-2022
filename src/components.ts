@@ -9,6 +9,7 @@ import { HealthCmp } from './components/HealthCmp';
 import { ImpedanceCmp } from './components/ImpedanceCmp';
 import { MassCmp } from './components/MassCmp';
 import { DragPhysCmp, MovementCmp } from './components/MovementCmp';
+import { PlayerAbilitiesCmp } from './components/PlayerAbilitiesCmp';
 import { SpringConstraintCmp } from './components/SpringConstraintCmp';
 import {
   CollisionGroup001,
@@ -41,7 +42,8 @@ export type Component =
   | GameDataCmp
   | CollisionGroup001
   | CollisionGroup002
-  | MassCmp;
+  | MassCmp
+  | PlayerAbilitiesCmp;
 
 // NOTE: you don't really need EntityDefSelector and DefToAssuredEntityId. It's
 // easier to use AssuredEntityId<...> and keep references to the IDs. Plus the

@@ -38,7 +38,7 @@ function solvePairWiseOverlaps(
   includeCollisionResponse: boolean = false
 ) {
   // if two groups are used, this will be needed. if only one group is used for
-  // inner collisions, then it is not due to the loop structure.
+  // inner collisions, then it is not, due to the loop structure.
   const resolvedThisTick = new Set<HandledPairId>();
 
   for (let i = 0; i < entities.length; i++) {

@@ -87,3 +87,24 @@ The player and defense targets can die.
 The game will restart! There are levels, and the systems are initialized by the levels themselves rather than being global.
 
 I think I'm going to call this "Paint a Picture of Death", and the goal will be to create a nice painting as you replace all the miasma with plants.
+
+### 2022-09-04
+
+Took a few days diversion to look into spatial hashing (got a bit nerd sniped...). Found a cool series of videos and felt the need to investigate further. https://www.youtube.com/watch?v=oewDaISQpw0
+
+Discovered that the author had used `Map` wrong, so I made a PR. https://github.com/simondevyoutube/Tutorial_SpatialHashGrid_Optimized/pull/1
+
+Not even sure of the benchmark, tbh. After writing my own, and also doing basic benchmarks, I doubt that Set/Map are as slow as the simondev benchmarks imply.
+
+`Set`s seem incredibly fast:
+
+- https://jsbench.me/zfl7ogu64g
+- https://jsbench.me/1al7oha7ln
+
+### 2022-09-05
+
+Basic collision overlaps are working! The miasma is clumping.
+
+### 2022-09-06
+
+Created a player abilities component to hold a future offensive ability.

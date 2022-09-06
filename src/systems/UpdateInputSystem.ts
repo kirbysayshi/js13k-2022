@@ -11,7 +11,11 @@ import { getUIState } from '../ui';
 import { assertDefinedFatal } from '../utils';
 
 export const UpdateInputSystem = () => (ces: CES3C, dt: number) => {
-  const entities = ces.select(['v-movement', 'user-controlled']);
+  const entities = ces.select([
+    'v-movement',
+    'user-controlled',
+    'player-abilities',
+  ]);
   const keyInputs = getKeyInputs();
   const ui = getUIState();
 
@@ -51,18 +55,19 @@ export const UpdateInputSystem = () => (ces: CES3C, dt: number) => {
 
   for (const e of entities) {
     const mv = ces.data(e, 'v-movement');
+    const pa = ces.data(e, 'player-abilities');
     assertDefinedFatal(mv);
+    assertDefinedFatal(pa);
     if (shouldAcceptMove) add(mv.acel, mv.acel, moveAcel);
     solveDrag(mv, drag);
 
     // TODO: need the cooldown to be attached to an ability component
     if (keyInputs.Digit1) {
-      let cmp = ces.has(e, 'cooldown');
-      if (!cmp) {
-        ces.add(e, makeCooldownCmp(100, 0));
-        cmp = ces.has(e, 'cooldown');
+      if (!pa.a001.cooldown) {
+        pa.a001.cooldown = ces.entity([makeCooldownCmp(100, 1)]);
       }
 
+      const cmp = ces.data(pa.a001.cooldown, 'cooldown');
       assertDefinedFatal(cmp);
 
       if (cmp.remainingMs === 0) {

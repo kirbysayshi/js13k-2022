@@ -272,18 +272,29 @@ export class CES3<ED extends EntityData> {
   select<T extends ED['k']>(kinds: T[] | readonly T[]) {
     const matching = new Set<AssuredEntityId<NarrowComponent<ED, T>>>();
 
+    // This "search" algorithm basically works by first starting with all
+    // possible matches using kinds[0], then excluding each entity by checking
+    // if it also has all subsequent kinds.
+
     for (let i = 0; i < kinds.length; i++) {
       const kind = kinds[i];
       const datas = this.cmpToIdArr.get(kind);
       if (!datas) return new Set<AssuredEntityId<NarrowComponent<ED, T>>>();
-      if (matching.size === 0) {
+
+      // If this is the first `kind`, then effectively add all to the
+      // potentially matching list, because any matching entity must have that
+      // first component. This must only happen on the first `kind` though, to
+      // prevent accidentally re-starting the algorithm when there is no
+      // intersection between the first and second kinds of the query.
+      if (i === 0) {
         for (let k = 0; k < datas.length; k++) {
           const data = datas[k];
           const eid = this.ids[k];
-          if (data !== undefined && eid)
+          if (data !== undefined && eid && !eid.destroyed)
             matching.add(eid as AssuredEntityId<NarrowComponent<ED, T>>);
         }
       } else {
+        // Delete any entities from the set that do not have the current kind.
         for (const eid of matching.values()) {
           if (datas[eid.id] === undefined) matching.delete(eid);
         }

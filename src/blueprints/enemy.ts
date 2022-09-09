@@ -1,3 +1,4 @@
+import { makeHealthCmp } from '../components/HealthCmp';
 import { makeMovementCmp } from '../components/MovementCmp';
 import { ViewportUnitVector2, vv2 } from '../components/ViewportCmp';
 import { CES3C } from '../initialize-ces';
@@ -5,6 +6,7 @@ import { CES3C } from '../initialize-ces';
 export function makeEnemy(
   ces: CES3C,
   pos: ViewportUnitVector2,
+  health = 100,
   attack = 1,
   speed = 0.1
 ) {
@@ -13,6 +15,7 @@ export function makeEnemy(
     { k: 'bounding-box', wh: vv2(1, 1) },
     { k: 'debug-drawable-rect' },
     { k: 'enemy-miasma', speed, attack },
+    makeHealthCmp(health),
     { k: 'drag-phys', drag: 0.5 },
     { k: 'collision-group-001' },
   ]);

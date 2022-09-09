@@ -13,11 +13,16 @@ export type PlayerAbilitiesCmp = {
     // that owns this PlayerAbilitiesCmp
     cooldown: AssuredEntityId<CooldownCmp> | null;
   };
+
+  a002: {
+    cooldown: AssuredEntityId<CooldownCmp> | null;
+  };
 };
 
 export function makePlayerAbilitiesCmp(): PlayerAbilitiesCmp {
   return {
     k: 'player-abilities',
     a001: { cooldown: null },
+    a002: { cooldown: null },
   };
 }

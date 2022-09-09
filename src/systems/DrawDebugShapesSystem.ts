@@ -1,3 +1,4 @@
+import { asViewportUnits } from '../components/ViewportCmp';
 import {
   debugDrawIntegratable,
   debugDrawIntegratableRect,
@@ -35,7 +36,7 @@ export const DrawDebugShapesSystem = () => (ces: CES3C, interp: number) => {
       vp.dprCanvas.ctx,
       mv,
       interp,
-      bb.wh.x > bb.wh.y ? bb.wh.y : bb.wh.x
+      asViewportUnits((bb.wh.x > bb.wh.y ? bb.wh.y : bb.wh.x) / 2)
     );
   }
 

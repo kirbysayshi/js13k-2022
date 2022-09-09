@@ -18,6 +18,7 @@ import {
   DebugDrawableRectCmp,
   EnemyImpedanceCmp,
   EnemyTargetableCmp,
+  PlacedGrenade,
   UserControlledCmp,
 } from './components/Tags';
 import { ViewportCmp } from './components/ViewportCmp';
@@ -43,7 +44,8 @@ export type Component =
   | CollisionGroup001
   | CollisionGroup002
   | MassCmp
-  | PlayerAbilitiesCmp;
+  | PlayerAbilitiesCmp
+  | PlacedGrenade;
 
 // NOTE: you don't really need EntityDefSelector and DefToAssuredEntityId. It's
 // easier to use AssuredEntityId<...> and keep references to the IDs. Plus the

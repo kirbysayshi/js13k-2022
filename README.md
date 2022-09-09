@@ -108,3 +108,13 @@ Basic collision overlaps are working! The miasma is clumping.
 ### 2022-09-06
 
 Created a player abilities component to hold a future offensive ability.
+
+### 2022-09-07
+
+Got a second player ability (grenade) almost complete!
+
+### 2022-09-08
+
+Found a major bug in CES3, where a selection could accidentally include the completely unmatching entities! Unfortunate. Given three component kinds to select, if there was no intersection between kind[0] and kind[1] (e.g. the matching result should be empty, the results of kind[3] shouldn't matter), the selection algorithm was accidentally restarting and including all of kind[2]'s entities! This probably goes back several years...
+
+Got player grenade destroying enemies! They explode outwards.

@@ -124,7 +124,7 @@ function collectAsepriteAtlasJSON<
   };
 }
 
-const animations = collectAsepriteAtlasJSON(AtlasJson);
+export const animations = collectAsepriteAtlasJSON(AtlasJson);
 
 export class AsepriteAtlasAnimatedSprite {
   private frame = 0;

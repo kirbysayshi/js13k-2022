@@ -19,6 +19,7 @@ import {
   EnemyImpedanceCmp,
   EnemyTargetableCmp,
   PlacedGrenade,
+  SingleFrame,
   UserControlledCmp,
 } from './components/Tags';
 import { ViewportCmp } from './components/ViewportCmp';
@@ -45,7 +46,8 @@ export type Component =
   | CollisionGroup002
   | MassCmp
   | PlayerAbilitiesCmp
-  | PlacedGrenade;
+  | PlacedGrenade
+  | SingleFrame;
 
 // NOTE: you don't really need EntityDefSelector and DefToAssuredEntityId. It's
 // easier to use AssuredEntityId<...> and keep references to the IDs. Plus the

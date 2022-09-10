@@ -1,15 +1,23 @@
+import { AssuredEntityId } from '../ces3';
+
 export type HealthCmp = {
   k: 'health-value';
   // How much health remains
   value: number;
   max: number;
+  onHealthZero?: (eid: AssuredEntityId<HealthCmp>) => void;
 };
 
-export function makeHealthCmp(max: number, value = max): HealthCmp {
+export function makeHealthCmp(
+  max: number,
+  onHealthZero?: HealthCmp['onHealthZero'],
+  value = max
+): HealthCmp {
   return {
     k: 'health-value',
     max,
     value,
+    onHealthZero,
   };
 }
 

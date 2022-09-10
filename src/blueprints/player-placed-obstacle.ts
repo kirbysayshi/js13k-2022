@@ -102,6 +102,8 @@ function makePusherExplosion(
     {
       // Apply the impulse directly to velocity in the direction of the
       // explosion (outwards)
+
+      // TODO: may want to use acceleration instead, so it's not instantaneous jump
       const dir = sub(reg0, mv.cpos, pos);
       const norm = normalize(dir, dir);
       const vel = scale(norm, norm, magnitude);

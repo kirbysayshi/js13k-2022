@@ -1,40 +1,45 @@
 import { AsepriteAtlasAnimatedSprite } from '../asset-map';
-import { EntityDefSelector } from '../components';
-import { MovementCmp } from './MovementCmp';
-import { ViewportUnits, vv2 } from './ViewportCmp';
 
 export type AssetCmp = {
   k: 'asset';
   asset: AsepriteAtlasAnimatedSprite['tag'];
-  width: ViewportUnits;
-  height: ViewportUnits;
+  // wh: ViewportUnitVector2;
 };
 
-export type DrawableAssetDef = [MovementCmp, AssetCmp];
-export const drawableAssetSelector: EntityDefSelector<DrawableAssetDef> = [
-  'v-movement',
-  'asset',
-] as const;
-
-export function drawableAssetDef(
-  x: ViewportUnits,
-  y: ViewportUnits,
-  width: AssetCmp['width'],
-  height: AssetCmp['height'],
+export function makeAssetCmp(
   asset: AssetCmp['asset']
-): DrawableAssetDef {
-  return [
-    {
-      k: 'v-movement',
-      cpos: vv2(x, y),
-      ppos: vv2(x, y),
-      acel: vv2(),
-    },
-    {
-      k: 'asset',
-      asset: asset,
-      width,
-      height,
-    },
-  ];
+  // wh: ViewportUnitVector2
+): AssetCmp {
+  return {
+    k: 'asset',
+    asset: asset,
+    // wh: copy(vv2(), wh),
+  };
 }
+
+// export type DrawableAssetDef = [MovementCmp, AssetCmp];
+// export const drawableAssetSelector: EntityDefSelector<DrawableAssetDef> = [
+//   'v-movement',
+//   'asset',
+// ] as const;
+
+// export function drawableAssetDef(
+//   pos: ViewportUnitVector2,
+//   wh: ViewportUnitVector2,
+//   asset: AssetCmp['asset']
+// ): DrawableAssetDef {
+//   return [
+//     {
+//       k: 'v-movement',
+//       cpos: vv2(x, y),
+//       ppos: vv2(x, y),
+//       acel: vv2(),
+//     },
+//     {
+//       k: 'asset',
+//       asset: asset,
+//       width,
+//       height,
+//     },
+//   ];
+// }

@@ -12,7 +12,7 @@ export type GameDataCmp = {
   prevState: null | GameState;
   currState: GameState;
   level: number;
-  levels: ((ces: CES3C) => void)[];
+  levels: ((ces: CES3C, assets: Assets) => void)[];
   drawStepSystems: DrawStepSystem[];
   updateStepSystems: UpdateStepSystem[];
   gameTickSystem: UpdateStepSystem;

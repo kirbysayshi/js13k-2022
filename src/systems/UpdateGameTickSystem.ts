@@ -7,6 +7,7 @@ import { DrawDebugCameraSystem } from './DrawDebugCameraSystem';
 import { DrawDebugFPSSystem } from './DrawDebugFPSSystem';
 import { DrawDebugGridBackgroundSystem } from './DrawDebugGridBackgroundSystem';
 import { DrawDebugShapesSystem } from './DrawDebugShapesSystem';
+import { DrawSingleFrameSpriteSystem } from './DrawSingleFrameSpriteSystem';
 import { DrawTestSpriteSystem } from './DrawTestSpriteSystem';
 import { UpdateCooldownSystem } from './UpdateCooldownSystem';
 import { UpdateEnemyMiasmaSystem } from './UpdateEnemyMiasmaSystem';
@@ -38,7 +39,10 @@ export const UpdateGameTickSystem =
           );
 
           g.drawStepSystems.length = 0;
-          g.drawStepSystems.push(DrawClearScreenSystem());
+          g.drawStepSystems.push(
+            DrawClearScreenSystem(),
+            DrawSingleFrameSpriteSystem(assets)
+          );
 
           if (process.env.NODE_ENV !== 'production') {
             g.drawStepSystems.push(
@@ -52,7 +56,7 @@ export const UpdateGameTickSystem =
 
           const levelInitializer = g.levels[g.level];
           assertDefinedFatal(levelInitializer);
-          levelInitializer(ces);
+          levelInitializer(ces, assets);
         }
 
         g.ticks += 1;

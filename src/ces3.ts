@@ -40,7 +40,7 @@ export function borrowAssuredEntityId<C extends EntityData>(
   return next;
 }
 
-export type NarrowComponent<T, N> = T extends { k: N } ? T : never;
+export type NarrowComponent<T, K> = T extends { k: K } ? T : never;
 
 // TODO: AssuredEntityId<A|B> is not allowed to be passed to a function that
 // only has AssuredEntityId<A>. This is annoying and makes the types less
@@ -66,14 +66,23 @@ export type SelectionEntityId<T> = T extends Set<infer I> ? I : never;
  * and narrow it to just K. Useful when assigning an entityId to a function
  * signature or other type.
  */
-export function narrowAssuredEntityId<C extends EntityData, K extends C['k']>(
-  eid: AssuredEntityId<C>,
-  k: K
-) {
+export function narrowAssuredEntityId<
+  C extends EntityData,
+  K extends C['k'] = C['k']
+>(eid: AssuredEntityId<C>, k: K) {
   return eid as AssuredEntityId<NarrowComponent<C, typeof k>>;
 }
 
+type InnerType<T> = T extends AssuredEntityId<infer C> ? C : never;
 
+// Unfortunately this allows assigning (C1 | C2) to (C3 | C4). Not sure how to
+// prevent that, I've tried everything I can. Always comes out `never`.
+export function dangerouslySpecifyAsssuredEntityId<
+  To extends EntityData,
+  C extends EntityData = EntityData
+>(eid: AssuredEntityId<C>) {
+  return eid as To extends InnerType<typeof eid> ? AssuredEntityId<To> : never;
+}
 
 type EntityData = {
   k: string;

@@ -118,3 +118,9 @@ Got a second player ability (grenade) almost complete!
 Found a major bug in CES3, where a selection could accidentally include the completely unmatching entities! Unfortunate. Given three component kinds to select, if there was no intersection between kind[0] and kind[1] (e.g. the matching result should be empty, the results of kind[3] shouldn't matter), the selection algorithm was accidentally restarting and including all of kind[2]'s entities! This probably goes back several years...
 
 Got player grenade destroying enemies! They explode outwards.
+
+### 2022-09-10
+
+Tombstones when miasma dies are working.
+
+Added like 10000 miasma to test the perf / limits. It's actually kind of fun to blow through all the miasma! But requires optimization. Might not even be possible to get 60fps.

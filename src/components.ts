@@ -10,6 +10,7 @@ import { ImpedanceCmp } from './components/ImpedanceCmp';
 import { MassCmp } from './components/MassCmp';
 import { DragPhysCmp, MovementCmp } from './components/MovementCmp';
 import { PlayerAbilitiesCmp } from './components/PlayerAbilitiesCmp';
+import { SpatialGridHandleCmp } from './components/SpatialGridHandleCmp';
 import { SpringConstraintCmp } from './components/SpringConstraintCmp';
 import {
   CollisionGroup001,
@@ -47,7 +48,8 @@ export type Component =
   | MassCmp
   | PlayerAbilitiesCmp
   | PlacedGrenade
-  | SingleFrame;
+  | SingleFrame
+  | SpatialGridHandleCmp;
 
 // NOTE: you don't really need EntityDefSelector and DefToAssuredEntityId. It's
 // easier to use AssuredEntityId<...> and keep references to the IDs. Plus the

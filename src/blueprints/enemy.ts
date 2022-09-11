@@ -39,8 +39,6 @@ export function makeEnemy(
           scale(bb.wh, bb.wh, 8),
           name
         );
-
-        console.log('sprite at', { cpos: currentPos.cpos });
       }
 
       ces.destroy(eid);

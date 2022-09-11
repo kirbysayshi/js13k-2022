@@ -24,7 +24,7 @@ function toCellIndex(n: number, cellSize: number) {
 /**
  * The external interface to the spatial hash.
  */
-interface SpatialHandleExt<T> {
+export interface SpatialHandleExt<T> {
   item: T;
 }
 
@@ -46,7 +46,7 @@ interface SpatialHandleInt<T> {
 /**
  * Easily convert between types.
  */
-function assertSpatialHandleIsInt<T>(
+function assertSpatialHandleIsInternal<T>(
   h: SpatialHandleExt<T> | SpatialHandleInt<T>
 ): asserts h is SpatialHandleInt<T> {
   if (!h.item) throw new Error('Not a SpatialHandle!');
@@ -57,7 +57,7 @@ function SpatialHandleReset<T>(
   bottomLeft: HashId,
   upperRight: HashId
 ) {
-  assertSpatialHandleIsInt(h);
+  assertSpatialHandleIsInternal(h);
   h.bottomLeft = bottomLeft;
   h.upperRight = upperRight;
   h.queryId = -1;
@@ -153,7 +153,7 @@ export class SpatialHash<T, U extends Vector2> {
   }
 
   delete(handle: SpatialHandleExt<T>) {
-    assertSpatialHandleIsInt(handle);
+    assertSpatialHandleIsInternal(handle);
     // Remove item from all cells
     for (const hashId of handle.cells) {
       const bucket = this.buckets.get(hashId);
@@ -167,7 +167,7 @@ export class SpatialHash<T, U extends Vector2> {
   }
 
   update(pos: U, wh: U, handle: SpatialHandleExt<T>): SpatialHandleExt<T> {
-    assertSpatialHandleIsInt(handle);
+    assertSpatialHandleIsInternal(handle);
     const { xstart, xend, ystart, yend } = cellBounds(pos, wh, this.cellSize);
     const bottomLeft = hashIdFromCellIndices(xstart, ystart);
     const upperRight = hashIdFromCellIndices(xend, yend);

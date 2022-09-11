@@ -1,4 +1,4 @@
-import { distance, distance2, normalize, scale, sub } from 'pocket-physics';
+import { distance2, normalize, scale, sub } from 'pocket-physics';
 import { makeCooldownCmp } from '../components/CooldownCmp';
 import { decHealth, makeHealthCmp } from '../components/HealthCmp';
 import { makeImpedanceCmp } from '../components/ImpedanceCmp';
@@ -84,17 +84,17 @@ function makePusherExplosion(
     const dist2 = distance2(pos, mv.cpos);
     const ratio = dist2 / effectRadius2;
 
-    if (process.env.NODE_ENV !== 'production') {
-      const dist = distance(pos, mv.cpos);
-      console.log({
-        eid: eid.id,
-        dist,
-        effectRadius,
-        dist2,
-        ratio,
-        effectRadius2,
-      });
-    }
+    // if (process.env.NODE_ENV !== 'production') {
+    //   const dist = distance(pos, mv.cpos);
+    //   console.log({
+    //     eid: eid.id,
+    //     dist,
+    //     effectRadius,
+    //     dist2,
+    //     ratio,
+    //     effectRadius2,
+    //   });
+    // }
 
     if (ratio > 1) continue; // outside effect radius
     const magnitude = (1 - ratio) * strengthImpulse;
@@ -115,8 +115,8 @@ function makePusherExplosion(
     assertDefinedFatal(hv);
     decHealth(hv, attack);
 
-    if (process.env.NODE_ENV !== 'production') {
-      console.log({ eid: eid.id });
-    }
+    // if (process.env.NODE_ENV !== 'production') {
+    //   console.log({ eid: eid.id });
+    // }
   }
 }

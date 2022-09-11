@@ -6,56 +6,121 @@ import {
   scale,
   sub,
 } from 'pocket-physics';
-import { AssuredEntityId, EntityId } from '../ces3';
+import {
+  AssuredEntityId,
+  dangerouslySpecifyAsssuredEntityId,
+  EntityId,
+} from '../ces3';
 import { BoundingBoxCmp } from '../components/BoundingBoxCmp';
 import { MovementCmp } from '../components/MovementCmp';
-import { vv2 } from '../components/ViewportCmp';
+import {
+  asViewportUnits,
+  ViewportUnitVector2,
+  vv2,
+} from '../components/ViewportCmp';
 import { CES3C } from '../initialize-ces';
+import { SpatialHandleExt, SpatialHash } from '../spatial-hash';
 import { assertDefinedFatal } from '../utils';
 
 const collision = createAABBOverlapResult();
 
-export const UpdateSolveOverlapsSystem =
-  (
-    group: 'collision-group-001' | 'collision-group-002' = 'collision-group-001'
-  ) =>
-  (ces: CES3C, dt: number) => {
-    const entities = [...ces.select(['v-movement', 'bounding-box', group])];
+export const UpdateSolveOverlapsSystem = (
+  group: 'collision-group-001' | 'collision-group-002' = 'collision-group-001'
+) =>
+  function execSolveOverlapsSystem(ces: CES3C, dt: number) {
+    const entities = ces.select(['v-movement', 'bounding-box', group]);
 
-    solvePairWiseOverlaps(
-      ces,
-      // TODO: fix this, somehow. The issue is that `_assured: T` is incompatible.
-      entities as AssuredEntityId<MovementCmp | BoundingBoxCmp>[],
-      false
-    );
+    const hg = new SpatialHash<
+      AssuredEntityId<MovementCmp | BoundingBoxCmp>,
+      ViewportUnitVector2
+    >(asViewportUnits(10));
+    for (const e0 of entities) {
+      const mv0 = ces.data(e0, 'v-movement');
+      const bb0 = ces.data(e0, 'bounding-box');
+      assertDefinedFatal(mv0);
+      assertDefinedFatal(bb0);
+
+      const hhh = ces.has(e0, 'spatial-grid-handle');
+
+      if (!hhh) {
+        const h = hg.add(
+          mv0.cpos,
+          bb0.wh,
+          dangerouslySpecifyAsssuredEntityId<MovementCmp | BoundingBoxCmp>(e0)
+        );
+        ces.add(e0, { k: 'spatial-grid-handle', handle: h });
+      } else {
+        hg.update(mv0.cpos, bb0.wh, hhh.handle);
+      }
+    }
+
+    const pairsThisTick = new Set<HandledPairId>();
+    const resolvedThisTick = new Set<HandledPairId>();
+    const singlesThisTick = new Set<EntityId['id']>();
+
+    for (const e0 of entities) {
+      const mv0 = ces.data(e0, 'v-movement');
+      const bb0 = ces.data(e0, 'bounding-box');
+      assertDefinedFatal(mv0);
+      assertDefinedFatal(bb0);
+
+      const results = hg.query(mv0.cpos, bb0.wh);
+
+      solvePairWiseOverlaps(
+        ces,
+        results,
+        false,
+        pairsThisTick,
+        resolvedThisTick
+      );
+    }
   };
 
 type HandledPairId = `${EntityId['id']}_${EntityId['id']}`;
 
 function solvePairWiseOverlaps(
   ces: CES3C,
-  entities: AssuredEntityId<MovementCmp | BoundingBoxCmp>[],
-  includeCollisionResponse: boolean = false
-) {
+  handles: SpatialHandleExt<AssuredEntityId<MovementCmp | BoundingBoxCmp>>[],
+  includeCollisionResponse: boolean = false,
+
+  pairsThisTick = new Set<HandledPairId>(),
   // if two groups are used, this will be needed. if only one group is used for
   // inner collisions, then it is not, due to the loop structure.
-  const resolvedThisTick = new Set<HandledPairId>();
+  resolvedThisTick = new Set<HandledPairId>()
+  // singlesThisTick = new Set<EntityId['id']>()
+) {
+  for (let i = 0; i < handles.length; i++) {
+    const e0 = handles[i].item;
 
-  for (let i = 0; i < entities.length; i++) {
-    const e0 = entities[i];
-    const mv0 = ces.data(e0, 'v-movement');
-    const bb0 = ces.data(e0, 'bounding-box');
-    const pm0 = ces.has(e0, 'p-mass');
-    assertDefinedFatal(mv0);
-    assertDefinedFatal(bb0);
+    // singlesThisTick.add(e0.id);
 
-    for (let j = i + 1; j < entities.length; j++) {
-      const e1 = entities[j];
+    for (let j = i + 1; j < handles.length; j++) {
+      const e1 = handles[j].item;
+
+      // Do not handle overlaps more than once per tick
+      const key0: HandledPairId = `${e0.id}_${e1.id}`;
+      const key1: HandledPairId = `${e1.id}_${e0.id}`;
+
+      if (pairsThisTick.has(key0) || pairsThisTick.has(key1)) {
+        continue;
+      } else {
+        pairsThisTick.add(key0);
+        pairsThisTick.add(key1);
+      }
+
+      const mv0 = ces.data(e0, 'v-movement');
+      const bb0 = ces.data(e0, 'bounding-box');
+      const pm0 = ces.has(e0, 'p-mass');
+      assertDefinedFatal(mv0);
+      assertDefinedFatal(bb0);
+
       const mv1 = ces.data(e1, 'v-movement');
       const bb1 = ces.data(e1, 'bounding-box');
       const pm1 = ces.has(e1, 'p-mass');
       assertDefinedFatal(mv1);
       assertDefinedFatal(bb1);
+
+      // singlesThisTick.add(e1.id);
 
       const isOverlapping = overlapAABBAABB(
         mv0.cpos.x,
@@ -70,10 +135,6 @@ function solvePairWiseOverlaps(
       );
 
       if (!isOverlapping) continue;
-
-      // Do not handle overlaps more than once per tick
-      const key0: HandledPairId = `${e0.id}_${e1.id}`;
-      const key1: HandledPairId = `${e1.id}_${e0.id}`;
 
       if (resolvedThisTick.has(key0) || resolvedThisTick.has(key1)) continue;
 

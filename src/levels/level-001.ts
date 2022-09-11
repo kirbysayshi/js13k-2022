@@ -24,9 +24,11 @@ export function Level001(ces: CES3C, assets: Assets) {
     const maxAttack = 5;
     const attack = minAttack + Math.floor(getRandom() * maxAttack);
 
-    const minSpeed = 0.02;
-    const maxSpeed = 0.1;
-    const speed = minSpeed + Math.floor(getRandom() * maxSpeed);
+    const minSpeed = 0.01;
+    const maxSpeed = 0.05;
+    const rand = getRandom();
+    const speed = minSpeed + rand * (maxSpeed - minSpeed);
+    console.log({ rand, speed });
 
     makeEnemy(ces, assets, vv2(x, y), 100, attack, speed);
   }

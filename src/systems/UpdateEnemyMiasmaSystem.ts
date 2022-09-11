@@ -150,6 +150,8 @@ function moveEnemyTowardsTargets(
   const mv = ces.data(closest.id, 'v-movement');
   assertDefinedFatal(mv);
 
+  // TODO: only move towards a target based on random aggressiveness to avoid the "particle field" effect
+
   // find angle to target
   // make accel vector
   // scale based on "agility"

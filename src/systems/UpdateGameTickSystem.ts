@@ -8,7 +8,6 @@ import { DrawDebugFPSSystem } from './DrawDebugFPSSystem';
 import { DrawDebugGridBackgroundSystem } from './DrawDebugGridBackgroundSystem';
 import { DrawDebugShapesSystem } from './DrawDebugShapesSystem';
 import { DrawSingleFrameSpriteSystem } from './DrawSingleFrameSpriteSystem';
-import { DrawTestSpriteSystem } from './DrawTestSpriteSystem';
 import { UpdateCooldownSystem } from './UpdateCooldownSystem';
 import { UpdateEnemyMiasmaSystem } from './UpdateEnemyMiasmaSystem';
 import { UpdateHealthSystem } from './UpdateHealthSystem';
@@ -48,7 +47,7 @@ export const UpdateGameTickSystem =
             g.drawStepSystems.push(
               DrawDebugFPSSystem(),
               DrawDebugGridBackgroundSystem(),
-              DrawTestSpriteSystem(assets),
+              // DrawTestSpriteSystem(assets),
               DrawDebugShapesSystem(),
               DrawDebugCameraSystem()
             );

@@ -58,6 +58,8 @@ export const UpdateSolveOverlapsSystem = (
     const resolvedThisTick = new Set<HandledPairId>();
     const singlesThisTick = new Set<EntityId['id']>();
 
+    // TODO: it's probably faster to query grid areas?
+
     for (const e0 of entities) {
       const mv0 = ces.data(e0, 'v-movement');
       const bb0 = ces.data(e0, 'bounding-box');

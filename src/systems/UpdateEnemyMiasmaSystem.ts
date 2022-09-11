@@ -30,22 +30,33 @@ const closest: {
 const aabbOverlapResult = createAABBOverlapResult<ViewportUnits>();
 // END: Preallocate
 
+
+// These are separate functions to aid in profiling.
+
+
+function queryEnemies(ces: CES3C) {
+  return ces.select(['v-movement', 'enemy-miasma', 'bounding-box']);
+}
+
+function queryTargets(ces: CES3C) {
+  return ces.select(['v-movement', 'enemy-targetable', 'bounding-box']);
+}
+
+function queryObstacles(ces: CES3C) {
+  return ces.select([
+    'v-movement',
+    'enemy-impedance',
+    'impedance-value',
+    'bounding-box',
+    'health-value',
+  ]);
+}
+
 export const UpdateEnemyMiasmaSystem = () =>
   function execEnemyMiasmaSystem(ces: CES3C, dt: number) {
-    const entities = ces.select(['v-movement', 'enemy-miasma', 'bounding-box']);
-    const targets = ces.select([
-      'v-movement',
-      'enemy-targetable',
-      'bounding-box',
-    ]);
-
-    const obstacles = ces.select([
-      'v-movement',
-      'enemy-impedance',
-      'impedance-value',
-      'bounding-box',
-      'health-value',
-    ]);
+    const entities = queryEnemies(ces);
+    const targets = queryTargets(ces);
+    const obstacles = queryObstacles(ces);
 
     for (const e of entities) {
       const emv = ces.data(e, 'v-movement');

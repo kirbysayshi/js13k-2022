@@ -1,30 +1,33 @@
-import { animations, Assets } from '../asset-map';
+import { Assets } from '../asset-map';
 import { asPixels, drawSheetAssetVp } from '../components/ViewportCmp';
 import { CES3C } from '../initialize-ces';
 import { assertDefinedFatal } from '../utils';
 
-export const DrawSingleFrameSpriteSystem =
+export const DrawMultiFrameVelocitySpriteSystem =
   (assets: Assets) => (ces: CES3C, interp: number) => {
     const vp = ces.selectFirstData('viewport');
     assertDefinedFatal(vp);
 
     const entities = ces.select([
       'v-movement',
-      'asset',
+      'animated-asset',
       'bounding-box',
-      'single-frame-sprite',
+      'multi-frame-velocity-sprite',
     ]);
 
     for (const eid of entities) {
       const mv = ces.data(eid, 'v-movement');
-      const asset = ces.data(eid, 'asset');
+      const asset = ces.data(eid, 'animated-asset');
       const bb = ces.data(eid, 'bounding-box');
       assertDefinedFatal(mv);
       assertDefinedFatal(asset);
       assertDefinedFatal(bb);
 
-      const anim = animations[asset.asset];
-      const frame = anim.frames[0];
+      const sprite = asset.animSprite;
+      if (!sprite) continue;
+
+      const frame = sprite.getFrame();
+      if (!frame) continue;
 
       drawSheetAssetVp(
         vp,

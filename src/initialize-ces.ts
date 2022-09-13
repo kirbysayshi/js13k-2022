@@ -6,6 +6,7 @@ import { Component } from './components';
 
 export type CES3C = CES3<Component>;
 
+
 export function initializeCES(): CES3C {
   return new CES3<Component>();
 }

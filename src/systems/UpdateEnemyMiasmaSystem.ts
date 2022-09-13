@@ -15,6 +15,7 @@ import { MovementCmp } from '../components/MovementCmp';
 import { EnemyTargetableCmp } from '../components/Tags';
 import { ViewportUnits, vv2 } from '../components/ViewportCmp';
 import { CES3C } from '../initialize-ces';
+import { getRandom } from '../rng';
 import { assertDefinedFatal } from '../utils';
 
 // BEGIN: Preallocate to avoid needing potentially hundreds of these per tick.
@@ -30,9 +31,7 @@ const closest: {
 const aabbOverlapResult = createAABBOverlapResult<ViewportUnits>();
 // END: Preallocate
 
-
 // These are separate functions to aid in profiling.
-
 
 function queryEnemies(ces: CES3C) {
   return ces.select(['v-movement', 'enemy-miasma', 'bounding-box']);
@@ -150,18 +149,20 @@ function moveEnemyTowardsTargets(
   const mv = ces.data(closest.id, 'v-movement');
   assertDefinedFatal(mv);
 
-  // TODO: only move towards a target based on random aggressiveness to avoid the "particle field" effect
+  // Only apply movement based on aggressivness
+  const aggroRand = getRandom();
+  if (aggroRand < emm.aggressiveness) {
+    // find angle to target
+    // make accel vector
+    // scale based on "agility"
+    // add to acel
 
-  // find angle to target
-  // make accel vector
-  // scale based on "agility"
-  // add to acel
+    sub(dir, mv.cpos, emv.cpos);
+    normalize(dir, dir);
 
-  sub(dir, mv.cpos, emv.cpos);
-  normalize(dir, dir);
-
-  // Move enemy
-  const enemySpeed = emm.speed * (1 - impedance);
-  scale(enemyAcel, dir, enemySpeed);
-  add(emv.acel, emv.acel, enemyAcel);
+    // Move enemy
+    const enemySpeed = emm.speed * (1 - impedance);
+    scale(enemyAcel, dir, enemySpeed);
+    add(emv.acel, emv.acel, enemyAcel);
+  }
 }

@@ -20,7 +20,7 @@ export function debugDrawIntegratable(
   radius: ViewportUnits = asViewportUnits(1)
 ) {
   ctx.beginPath();
-  ctx.fillStyle = 'blue';
+  ctx.fillStyle = 'rgba(0,0,255,0.2)';
   ctx.arc(
     toProjectedPixels(
       vp,
@@ -47,7 +47,7 @@ export function debugDrawIntegratableRect(
   wh: ViewportUnitVector2
 ) {
   ctx.beginPath();
-  ctx.fillStyle = 'blue';
+  ctx.fillStyle = 'rgba(0,0,255,0.2)';
 
   const vpX = cmp.ppos.x + (cmp.cpos.x - cmp.ppos.x) * interp;
   const vpY = cmp.ppos.y + (cmp.cpos.y - cmp.ppos.y) * interp;

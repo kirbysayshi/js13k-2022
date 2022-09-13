@@ -13,7 +13,7 @@ export function makeSingleFrameSprite(
   ces.entity([
     makeMovementCmp(pos),
     makeAssetCmp(asset),
-    { k: 'single-frame' },
+    { k: 'single-frame-sprite' },
     { k: 'bounding-box', wh: copy(vv2(), wh) },
   ]);
 }

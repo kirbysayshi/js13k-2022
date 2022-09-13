@@ -7,6 +7,8 @@ import { DrawDebugCameraSystem } from './DrawDebugCameraSystem';
 import { DrawDebugFPSSystem } from './DrawDebugFPSSystem';
 import { DrawDebugGridBackgroundSystem } from './DrawDebugGridBackgroundSystem';
 import { DrawDebugShapesSystem } from './DrawDebugShapesSystem';
+import { DrawHealthValueSystem } from './DrawHealthValueSystem';
+import { DrawMultiFrameVelocitySpriteSystem } from './DrawMultiFrameVelocitySpriteSystem';
 import { DrawSingleFrameSpriteSystem } from './DrawSingleFrameSpriteSystem';
 import { UpdateCooldownSystem } from './UpdateCooldownSystem';
 import { UpdateEnemyMiasmaSystem } from './UpdateEnemyMiasmaSystem';
@@ -14,6 +16,7 @@ import { UpdateHealthSystem } from './UpdateHealthSystem';
 import { UpdateInputSystem } from './UpdateInputSystem';
 import { UpdateMovementSystem } from './UpdateMovementSystem';
 import { UpdateSolveOverlapsSystem } from './UpdateSolveOverlapsSystem';
+import { UpdateVelocitySpriteSystem } from './UpdateVelocitySpriteSystem';
 
 export const UpdateGameTickSystem =
   (assets: Assets) => (ces: CES3C, dt: number) => {
@@ -34,13 +37,16 @@ export const UpdateGameTickSystem =
             UpdateEnemyMiasmaSystem(),
             UpdateMovementSystem(),
             UpdateSolveOverlapsSystem(),
-            UpdateHealthSystem()
+            UpdateHealthSystem(),
+            UpdateVelocitySpriteSystem()
           );
 
           g.drawStepSystems.length = 0;
           g.drawStepSystems.push(
             DrawClearScreenSystem(),
-            DrawSingleFrameSpriteSystem(assets)
+            DrawSingleFrameSpriteSystem(assets),
+            DrawMultiFrameVelocitySpriteSystem(assets),
+            DrawHealthValueSystem()
           );
 
           if (process.env.NODE_ENV !== 'production') {

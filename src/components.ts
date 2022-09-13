@@ -1,4 +1,5 @@
-import type { AssuredEntityId, CES3, NarrowComponent } from './ces3';
+import type { AssuredEntityId, NarrowComponent } from './ces3';
+import { AnimatedAssetCmp } from './components/AnimatedAssetCmp';
 import { AssetCmp } from './components/AssetCmp';
 import { BoundingBoxCmp } from './components/BoundingBoxCmp';
 import { CooldownCmp } from './components/CooldownCmp';
@@ -19,8 +20,9 @@ import {
   DebugDrawableRectCmp,
   EnemyImpedanceCmp,
   EnemyTargetableCmp,
+  MultiFrameVelocitySprite,
   PlacedGrenade,
-  SingleFrame,
+  SingleFrameSprite,
   UserControlledCmp,
 } from './components/Tags';
 import { ViewportCmp } from './components/ViewportCmp';
@@ -48,8 +50,10 @@ export type Component =
   | MassCmp
   | PlayerAbilitiesCmp
   | PlacedGrenade
-  | SingleFrame
-  | SpatialGridHandleCmp;
+  | SingleFrameSprite
+  | MultiFrameVelocitySprite
+  | SpatialGridHandleCmp
+  | AnimatedAssetCmp;
 
 // NOTE: you don't really need EntityDefSelector and DefToAssuredEntityId. It's
 // easier to use AssuredEntityId<...> and keep references to the IDs. Plus the
@@ -69,12 +73,3 @@ export type EntityDefSelector<T extends [Component] | Component[]> = Readonly<{
 export type DefToAssuredEntityId<T extends Component[]> = AssuredEntityId<
   NarrowComponent<Component, T[number]['k']>
 >;
-
-export const DrawTimeHz = 60 as const;
-export const UpdateTimeHz = 30 as const;
-
-// A system of an entity-component-system framework is simply a function that
-// is repeatedly called. We separate them into two types based on how often
-// they are invoked: every frame or once every update step (10fps by default).
-export type DrawStepSystem = (ces: CES3<Component>, interp: number) => void;
-export type UpdateStepSystem = (ces: CES3<Component>, dt: number) => void;

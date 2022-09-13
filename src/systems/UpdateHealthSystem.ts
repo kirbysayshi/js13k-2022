@@ -6,6 +6,7 @@ export const UpdateHealthSystem = () => (ces: CES3C, dt: number) => {
   for (const e of entities) {
     const cmp = ces.data(e, 'health-value');
     assertDefinedFatal(cmp);
+    cmp.lastChangeMs += dt;
     if (cmp.value <= 0) {
       if (cmp.onHealthZero) {
         cmp.onHealthZero(e);

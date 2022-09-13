@@ -21,9 +21,9 @@ export function makeEnemy(
 ) {
   ces.entity([
     makeMovementCmp(pos),
-    { k: 'bounding-box', wh: vv2(4, 4) },
+    { k: 'bounding-box', wh: vv2(1, 1) },
     { k: 'debug-drawable-rect' },
-    makeAnimatedAssetCmp('enemy-16x16#walk'),
+    makeAnimatedAssetCmp('enemy-16x16#walk', vv2(4, 4)),
     { k: 'multi-frame-velocity-sprite' },
     { k: 'enemy-miasma', speed, attack, aggressiveness },
     makeHealthCmp(health, (eid) => {
@@ -51,7 +51,7 @@ function makeEnemyTombstone(
     const idx = Math.floor(assetChoices.length * rand);
     const name = assetChoices[idx];
 
-    makeSingleFrameSprite(ces, currentPos.cpos, scale(bb.wh, bb.wh, 1), name);
+    makeSingleFrameSprite(ces, currentPos.cpos, scale(bb.wh, bb.wh, 4), name);
 
     const players = ces.select(['player-abilities', 'health-value']);
     for (const pid of players) {

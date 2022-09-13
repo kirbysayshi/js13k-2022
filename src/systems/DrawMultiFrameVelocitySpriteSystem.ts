@@ -29,6 +29,9 @@ export const DrawMultiFrameVelocitySpriteSystem =
       const frame = sprite.getFrame();
       if (!frame) continue;
 
+      const sizeX = asset.wh ? asset.wh.x : bb.wh.x;
+      const sizeY = asset.wh ? asset.wh.y : bb.wh.y;
+
       drawSheetAssetVp(
         vp,
         assets.getAtlas(),
@@ -46,8 +49,8 @@ export const DrawMultiFrameVelocitySpriteSystem =
         asPixels(frame.sourceSize.h),
         true,
 
-        bb.wh.x,
-        bb.wh.y
+        sizeX,
+        sizeY
       );
     }
   };

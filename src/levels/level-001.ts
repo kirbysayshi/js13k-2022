@@ -17,7 +17,7 @@ export function Level001(ces: CES3C, assets: Assets) {
 
   const playerBuffer = asViewportUnits(25);
 
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < 3000; i++) {
     const x = getRandom() * 100;
     const y = getRandom() * 100;
 

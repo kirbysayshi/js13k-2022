@@ -124,3 +124,23 @@ Got player grenade destroying enemies! They explode outwards.
 Tombstones when miasma dies are working.
 
 Added like 10000 miasma to test the perf / limits. It's actually kind of fun to blow through all the miasma! But requires optimization. Might not even be possible to get 60fps.
+
+### 2022-09-11
+
+Enemies have an "aggressiveness" value that determines how often they move.
+
+### 2022-09-12
+
+Seems unlikely that I'll finish something by the deadline. So much polish is required to even have a complete game beyond a tech demo, and that's without consideration of actual gameplay / feel.
+
+- [ ] Ability UI
+- [ ] Health Display
+- [x] Player Sprites (kinda)
+- [x] Miasma Sprites
+- [ ] Ability Sprites
+- [ ] Start Screen
+- [ ] Sharing / Export of the drawing
+
+### 2022-09-13
+
+Health display is working, and added a safe zone.
